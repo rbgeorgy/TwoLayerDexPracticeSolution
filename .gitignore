@@ -1,0 +1,8 @@
+/packages
+/.idea
+/Objects/bin
+/Objects/obj
+/Tests/bin
+/Tests/obj
+TwoLayerSolution.sln.DotSettings.user
+/Tests/packages.config
