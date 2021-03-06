@@ -45,11 +45,17 @@
         <Compile Include="..\Objects\Circle.cs">
           <Link>Objects\Circle.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\EmployeeCatalog.cs">
+          <Link>Objects\EmployeeCatalog.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\Figure.cs">
           <Link>Objects\Figure.cs</Link>
         </Compile>
         <Compile Include="..\Objects\PerimeterFigureComparer.cs">
           <Link>Objects\PerimeterFigureComparer.cs</Link>
+        </Compile>
+        <Compile Include="..\Objects\Person.cs">
+          <Link>Objects\Person.cs</Link>
         </Compile>
         <Compile Include="..\Objects\Product.cs">
           <Link>Objects\Product.cs</Link>
@@ -67,6 +73,8 @@
           <Link>Objects\Triangle.cs</Link>
         </Compile>
         <Compile Include="ComparableInterfaceTest.cs" />
+        <Compile Include="DictionaryTest.cs" />
+        <Compile Include="EqualsTest.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="QueryableInterfaceTest.cs" />
     </ItemGroup>
