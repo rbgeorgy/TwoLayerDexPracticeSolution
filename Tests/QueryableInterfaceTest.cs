@@ -47,7 +47,7 @@ namespace Tests
                 switch (whatToPrint)
                 {
                     case ProductEnum.Name:
-                        Console.WriteLine(item.Name);
+                        Console.WriteLine(item.ProductName);
                         break;
                     case ProductEnum.Number:
                         Console.WriteLine(item.Number);
@@ -77,7 +77,7 @@ namespace Tests
         [Test]
         public void GroupByAndSelectQueryTest()
         {
-            var nameQueryResult = _products.GroupBy(p => p.Name.Length).Select(g => new {Length = g.Key, Words = g});
+            var nameQueryResult = _products.GroupBy(p => p.ProductName.Length).Select(g => new {Length = g.Key, Words = g});
             foreach (var item in nameQueryResult)
             {
                 Console.WriteLine("Brands with length " + item.Words.Key + ":");
@@ -99,7 +99,7 @@ namespace Tests
         [Test]
         public void WhereAndGroupByAndSelectTest()
         {
-            var isAvailableQueryResult = _products.Where(p => p.IsAvailable).GroupBy(p => p.Name)
+            var isAvailableQueryResult = _products.Where(p => p.IsAvailable).GroupBy(p => p.ProductName)
                 .Select(g => new {Name = g.Key, productsWithCurrentName = g});
             List<int> sums = new List<int>();
             foreach (var item in isAvailableQueryResult)
