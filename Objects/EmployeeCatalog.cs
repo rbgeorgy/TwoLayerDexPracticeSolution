@@ -33,5 +33,17 @@ namespace TwoLayerSolution
             }
             return false;
         }
+
+        public void AddItem(Person key, string value)
+        {
+            if (key == null || value == null)
+            {
+                throw new ArgumentNullException("Заполните аргументы запроса!");
+            }
+            else
+            {
+                _placeOfWorkDirectory[key] = value;
+            }
+        }
     }
 }

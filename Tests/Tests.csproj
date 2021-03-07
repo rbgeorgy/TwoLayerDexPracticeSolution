@@ -72,11 +72,15 @@
         <Compile Include="..\Objects\Triangle.cs">
           <Link>Objects\Triangle.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\UniqueCollection.cs">
+          <Link>Objects\UniqueCollection.cs</Link>
+        </Compile>
         <Compile Include="ComparableInterfaceTest.cs" />
         <Compile Include="DictionaryTest.cs" />
         <Compile Include="EqualsTest.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="QueryableInterfaceTest.cs" />
+        <Compile Include="GenericTest.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="..\Objects\Objects.csproj">
