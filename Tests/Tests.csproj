@@ -51,6 +51,9 @@
         <Compile Include="..\Objects\Figure.cs">
           <Link>Objects\Figure.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\IntForTimeSpanExtension.cs">
+          <Link>Objects\IntForTimeSpanExtension.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\NumberStream.cs">
           <Link>Objects\NumberStream.cs</Link>
         </Compile>
@@ -85,6 +88,7 @@
         <Compile Include="DictionaryTest.cs" />
         <Compile Include="EqualsTest.cs" />
         <Compile Include="EventsTest.cs" />
+        <Compile Include="ExtensionTest.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="QueryableInterfaceTest.cs" />
         <Compile Include="GenericTest.cs" />
