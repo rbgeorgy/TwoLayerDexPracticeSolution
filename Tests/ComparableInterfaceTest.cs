@@ -58,7 +58,8 @@ namespace Tests
             {
                 foreach (var item in _figureArray)
                 {
-                    Console.WriteLine(item + ", " + parameter + ": " + item.GetSquare());
+                    double toPrint = parameter=="с площадью" ? item.GetSquare() : item.GetPerimeter();
+                    Console.WriteLine(item + ", " + parameter + ": " + toPrint);
                 }
                 Console.WriteLine();
             }
@@ -94,7 +95,7 @@ namespace Tests
         }
         
         [Test]
-        public void SortBySquareBySquareWithExternalComparerTest()
+        public void SortBySquareWithExternalComparerTest()
         {
             _sortBySquareWithExternalComparer();
             _printArray("с площадью");
@@ -102,7 +103,7 @@ namespace Tests
         }
         
         [Test]
-        public void SortByPerimeterBySquareWithExternalComparerTest()
+        public void SortByPerimeterWithExternalComparerTest()
         {
             _sortByPerimeterWithExternalComparer();
             _printArray("с периметром");
