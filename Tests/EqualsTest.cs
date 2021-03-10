@@ -6,6 +6,7 @@ namespace Tests
 {
     public class EqualsTest
     {
+        //TODO: Переработать для параллельных запусков; Переопределить ==;
         private Person _personOne;
         private Person _personTwo;
         private Person _personThree;
@@ -39,16 +40,18 @@ namespace Tests
         public void ValueEqualPersonInstanceTest()
         {
             Assert.True(_personOne.Equals(_personThree));
-            Console.WriteLine("personOne Equal to personThree? " + _personOne.Equals(_personThree));
+        }
+        
+        [Test]
+        public void ValueNotEqualPersonInstanceTest()
+        {
+            Assert.False(_personOne.Equals(_personTwo));
         }
         
         [Test]
         public void GetHashCodeInValueEqualPersonInstanceTest()
         {
             Assert.True(_personOne.GetHashCode() == _personThree.GetHashCode());
-            Console.WriteLine("GetHashCode _personOne возвращает " + _personOne.GetHashCode());
-            Console.WriteLine("GetHashCode _personTwo возвращает " + _personTwo.GetHashCode());
-            Console.WriteLine("GetHashCode _personThree возвращает " + _personThree.GetHashCode());
         }
 
     }

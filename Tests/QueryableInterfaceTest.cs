@@ -9,11 +9,11 @@ namespace Tests
 {
     public class QueryableInterfaceTest
     {
-        private Product[] _products;
-
         private readonly string[] _productNames = { "Samsung", "Apple", "Huawei", "Nokia",
             "Sony", "HTC", "Motorola", "Lenovo",
             "Xiaomi", "Lg", "Meizu", "Asus", "ZTE", "Acer" };
+
+        private enum MoreThenLessThen { MoreThan, LessThan }
 
         private DateTime UnixTimeStampToDateTime( double unixTimeStamp )
         {
@@ -27,18 +27,19 @@ namespace Tests
             return random.Next() > (Int32.MaxValue / 2);
         }
         
-        private void Generate()
+        private Product[] Generate()
         {
             var rand = new Random();
-            _products = new Product[100];
+            var products = new Product[100];
             for (int i = 0; i < 100; ++i)
             {
                 int rndIndex = rand.Next(_productNames.Length);
                 int rndNumber = rand.Next(0, 100);
                 int rndUnixTime = rand.Next(1610000000,1614082083);
-                _products[i] = new Product(_productNames[rndIndex], rndNumber, UnixTimeStampToDateTime(rndUnixTime), NextBoolean(rand));
+                products[i] = new Product(_productNames[rndIndex], rndNumber, UnixTimeStampToDateTime(rndUnixTime), NextBoolean(rand));
                 rand.Next(0, 100);
             }
+            return products;
         }
 
         private void Print(IEnumerable<Product> collection, ProductEnum whatToPrint)
@@ -61,24 +62,45 @@ namespace Tests
                 }
             }
         }
-        
-        [SetUp]
-        public void SetUp()
+
+        private bool CheckAllTime(Product[] products, int threshold, MoreThenLessThen parameter)
         {
-            Generate();
+            foreach (var item in products)
+            {
+                if ( parameter == MoreThenLessThen.MoreThan ?
+                    ((DateTimeOffset) item.Time).ToUnixTimeSeconds() < threshold :
+                    ((DateTimeOffset) item.Time).ToUnixTimeSeconds() > threshold
+                    ) return false;
+            }
+
+            return true;
         }
         
-        [Test]
-        public void WhereAndOrderByQueryTest()
+        private bool CheckAnyTime(Product[] products, int threshold, MoreThenLessThen parameter)
         {
-            var numberQueryResult = _products.Where(p => p.Number % 2 == 0).OrderBy(p => p.Number);
+            foreach (var item in products)
+            {
+                if ( parameter == MoreThenLessThen.MoreThan ?
+                    ((DateTimeOffset) item.Time).ToUnixTimeSeconds() > threshold :
+                    ((DateTimeOffset) item.Time).ToUnixTimeSeconds() < threshold
+                    ) return true;
+            }
+            return false;
+        }
+
+        [Test]
+        public void WhereOrderByQueryTest()
+        {
+            var products = Generate();
+            var numberQueryResult = products.Where(p => p.Number % 2 == 0).OrderBy(p => p.Number);
             Print(numberQueryResult, ProductEnum.Number);
         }
 
         [Test]
-        public void GroupByAndSelectQueryTest()
+        public void GroupBySelectQueryTest()
         {
-            var nameQueryResult = _products.GroupBy(p => p.ProductName.Length).Select(g => new {Length = g.Key, Words = g});
+            var products = Generate();
+            var nameQueryResult = products.GroupBy(p => p.ProductName.Length).Select(g => new {Length = g.Key, Words = g});
             foreach (var item in nameQueryResult)
             {
                 Console.WriteLine("Brands with length " + item.Words.Key + ":");
@@ -87,20 +109,24 @@ namespace Tests
         }
 
         [Test]
-        public void AllAndAnyQueryTest()
+        public void AllAnyQueryTest()
         {
-            String timeQueryResult = _products.All(p => ((DateTimeOffset) p.Time).ToUnixTimeSeconds() > 1614000000)
-                ? "Все даты позднее, чем " + UnixTimeStampToDateTime(1614000000)
-                : _products.Any(p => ((DateTimeOffset) p.Time).ToUnixTimeSeconds() > 1614000000)
-                    ? "Есть даты не позднее, чем " + UnixTimeStampToDateTime(1614000000)
-                    : "Нет ни одной даты позднее, чем " + UnixTimeStampToDateTime(1614000000);
-            Console.WriteLine(timeQueryResult);
+            var products = Generate();
+            var timeQueryAllResult = products.All(p => ((DateTimeOffset) p.Time).ToUnixTimeSeconds() > 1614000000);
+            Assert.IsTrue(timeQueryAllResult
+                ? CheckAllTime(products, 1614000000, MoreThenLessThen.MoreThan)
+                : CheckAnyTime(products, 1614000000, MoreThenLessThen.LessThan));
+            var timeQueryAnyResult = products.Any(p => ((DateTimeOffset) p.Time).ToUnixTimeSeconds() > 1614000000);
+            Assert.IsTrue(timeQueryAnyResult
+                ? CheckAnyTime(products, 1614000000, MoreThenLessThen.MoreThan)
+                : CheckAllTime(products, 1614000000, MoreThenLessThen.LessThan));
         }
 
         [Test]
-        public void WhereAndGroupByAndSelectTest()
+        public void WhereGroupBySelectTest()
         {
-            var isAvailableQueryResult = _products.Where(p => p.IsAvailable).GroupBy(p => p.ProductName)
+            var products = Generate();
+            var isAvailableQueryResult = products.Where(p => p.IsAvailable).GroupBy(p => p.ProductName)
                 .Select(g => new {Name = g.Key, productsWithCurrentName = g});
             List<int> sums = new List<int>();
             foreach (var item in isAvailableQueryResult)
@@ -108,7 +134,6 @@ namespace Tests
                 int checkSum = item.productsWithCurrentName.Sum(p => p.Number);
                 sums.Add(checkSum);
             }
-            
             Console.WriteLine("Максимальное количество доступного товара одного бренда: " + sums.Max());
             Console.WriteLine("Минимальное количество доступного товара одного бренда: " + sums.Min());
         }

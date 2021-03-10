@@ -8,6 +8,8 @@ namespace Tests
 {
     public class DictionaryTest
     {
+        //TODO: Переработать для параллельных запусков; Переопределить ==; HashCode, Equals
+        //TODO:
         private Person _personOne;
         private Person _personTwo;
         private Person _personThree;
@@ -71,7 +73,7 @@ namespace Tests
         }
         
         [Test]
-        public void SetValuesFromOtherThreadsTest()
+        public void SetValuesFromOtherThreadsTest()//TODO: не делать
         {
             Thread newThread = new Thread(new ThreadStart(AddItem));
             newThread.Start();
