@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using TwoLayerSolution;
+using TwoLayerSolution.Enums;
 
 namespace Tests
 {
@@ -14,19 +15,19 @@ namespace Tests
             "Sony", "HTC", "Motorola", "Lenovo",
             "Xiaomi", "Lg", "Meizu", "Asus", "ZTE", "Acer" };
 
-        private DateTime _unixTimeStampToDateTime( double unixTimeStamp )
+        private DateTime UnixTimeStampToDateTime( double unixTimeStamp )
         {
             DateTime dtDateTime = new DateTime(1970,1,1,0,0,0,0,System.DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds( unixTimeStamp ).ToLocalTime();
             return dtDateTime;
         }
 
-        private bool _nextBoolean(Random random)
+        private bool NextBoolean(Random random)
         {
             return random.Next() > (Int32.MaxValue / 2);
         }
         
-        private void _generate()
+        private void Generate()
         {
             var rand = new Random();
             _products = new Product[100];
@@ -35,12 +36,12 @@ namespace Tests
                 int rndIndex = rand.Next(_productNames.Length);
                 int rndNumber = rand.Next(0, 100);
                 int rndUnixTime = rand.Next(1610000000,1614082083);
-                _products[i] = new Product(_productNames[rndIndex], rndNumber, _unixTimeStampToDateTime(rndUnixTime), _nextBoolean(rand));
+                _products[i] = new Product(_productNames[rndIndex], rndNumber, UnixTimeStampToDateTime(rndUnixTime), NextBoolean(rand));
                 rand.Next(0, 100);
             }
         }
 
-        private void _print(IEnumerable<Product> collection, ProductEnum whatToPrint)
+        private void Print(IEnumerable<Product> collection, ProductEnum whatToPrint)
         {
             foreach (var item in collection)
             {
@@ -64,14 +65,14 @@ namespace Tests
         [SetUp]
         public void SetUp()
         {
-            _generate();
+            Generate();
         }
         
         [Test]
         public void WhereAndOrderByQueryTest()
         {
             var numberQueryResult = _products.Where(p => p.Number % 2 == 0).OrderBy(p => p.Number);
-            _print(numberQueryResult, ProductEnum.Number);
+            Print(numberQueryResult, ProductEnum.Number);
         }
 
         [Test]
@@ -81,7 +82,7 @@ namespace Tests
             foreach (var item in nameQueryResult)
             {
                 Console.WriteLine("Brands with length " + item.Words.Key + ":");
-                _print(item.Words, ProductEnum.Name);
+                Print(item.Words, ProductEnum.Name);
             }
         }
 
@@ -89,10 +90,10 @@ namespace Tests
         public void AllAndAnyQueryTest()
         {
             String timeQueryResult = _products.All(p => ((DateTimeOffset) p.Time).ToUnixTimeSeconds() > 1614000000)
-                ? "Все даты позднее, чем " + _unixTimeStampToDateTime(1614000000)
+                ? "Все даты позднее, чем " + UnixTimeStampToDateTime(1614000000)
                 : _products.Any(p => ((DateTimeOffset) p.Time).ToUnixTimeSeconds() > 1614000000)
-                    ? "Есть даты не позднее, чем " + _unixTimeStampToDateTime(1614000000)
-                    : "Нет ни одной даты позднее, чем " + _unixTimeStampToDateTime(1614000000);
+                    ? "Есть даты не позднее, чем " + UnixTimeStampToDateTime(1614000000)
+                    : "Нет ни одной даты позднее, чем " + UnixTimeStampToDateTime(1614000000);
             Console.WriteLine(timeQueryResult);
         }
 

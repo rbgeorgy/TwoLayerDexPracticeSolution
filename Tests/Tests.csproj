@@ -47,20 +47,26 @@
         <Compile Include="..\Objects\Circle.cs">
           <Link>Objects\Circle.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\Comparers\PerimeterFigureComparer.cs">
+          <Link>Objects\Comparers\PerimeterFigureComparer.cs</Link>
+        </Compile>
+        <Compile Include="..\Objects\Comparers\SquareFigureComparer.cs">
+          <Link>Objects\Comparers\SquareFigureComparer.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\EmployeeCatalog.cs">
           <Link>Objects\EmployeeCatalog.cs</Link>
+        </Compile>
+        <Compile Include="..\Objects\Enums\ProductEnum.cs">
+          <Link>Objects\Enums\ProductEnum.cs</Link>
+        </Compile>
+        <Compile Include="..\Objects\Extensions\IntForTimeSpanExtension.cs">
+          <Link>Objects\Extensions\IntForTimeSpanExtension.cs</Link>
         </Compile>
         <Compile Include="..\Objects\Figure.cs">
           <Link>Objects\Figure.cs</Link>
         </Compile>
-        <Compile Include="..\Objects\IntForTimeSpanExtension.cs">
-          <Link>Objects\IntForTimeSpanExtension.cs</Link>
-        </Compile>
         <Compile Include="..\Objects\NumberStream.cs">
           <Link>Objects\NumberStream.cs</Link>
-        </Compile>
-        <Compile Include="..\Objects\PerimeterFigureComparer.cs">
-          <Link>Objects\PerimeterFigureComparer.cs</Link>
         </Compile>
         <Compile Include="..\Objects\Person.cs">
           <Link>Objects\Person.cs</Link>
@@ -68,17 +74,11 @@
         <Compile Include="..\Objects\Product.cs">
           <Link>Objects\Product.cs</Link>
         </Compile>
-        <Compile Include="..\Objects\ProductEnum.cs">
-          <Link>Objects\ProductEnum.cs</Link>
-        </Compile>
         <Compile Include="..\Objects\QueueWithEvents.cs">
           <Link>Objects\QueueWithEvents.cs</Link>
         </Compile>
         <Compile Include="..\Objects\Rectangle.cs">
           <Link>Objects\Rectangle.cs</Link>
-        </Compile>
-        <Compile Include="..\Objects\SquareFigureComparer.cs">
-          <Link>Objects\SquareFigureComparer.cs</Link>
         </Compile>
         <Compile Include="..\Objects\Triangle.cs">
           <Link>Objects\Triangle.cs</Link>

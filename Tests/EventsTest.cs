@@ -12,7 +12,7 @@ namespace Tests
         private QueueWithEvents<int> _queueWithEvents;
         private NumberStream _numberStream;
         
-        private void _printIfProductNameChanged(object sender, PropertyChangedEventArgs e)
+        private void PrintIfProductNameChanged(object sender, PropertyChangedEventArgs e)
         {
             Console.WriteLine("Изменилось свойство " + e.PropertyName + " продукта.Новое имя: " + sender);
         }
@@ -26,7 +26,7 @@ namespace Tests
         public void SetUp()
         {
             _testingProduct = new Product("RTX 3060", 42, DateTime.Today, true);
-            _testingProduct.PropertyChanged += _printIfProductNameChanged;
+            _testingProduct.PropertyChanged += PrintIfProductNameChanged;
             _queueWithEvents = new QueueWithEvents<int>(3);
             _queueWithEvents.QueueOverflow += PrintEventMessage;
             _queueWithEvents.QueueUnderflow += PrintEventMessage;

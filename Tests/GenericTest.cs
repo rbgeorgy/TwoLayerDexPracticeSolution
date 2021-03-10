@@ -12,7 +12,7 @@ namespace Tests
         private Person _personThree;
         private delegate void AddFunction<T>(UniqueCollection<T> uniqueCollection, Collection<T> toAdd);
         
-        private void _tryAddingAnElementToUniqueCollection<T>(AddFunction<T> addFunction, Collection<T> toAdd)
+        private void TryAddingAnElementToUniqueCollection<T>(AddFunction<T> addFunction, Collection<T> toAdd)
         {
             UniqueCollection<T> uniqueCollection = new UniqueCollection<T>();
             try
@@ -29,7 +29,7 @@ namespace Tests
             }
         }
         
-        private void _addFunctionMethod<T>(UniqueCollection<T> uniqueCollection, Collection<T> toAdd)
+        private void AddFunctionMethod<T>(UniqueCollection<T> uniqueCollection, Collection<T> toAdd)
         {
             foreach (T item in toAdd)
             {
@@ -65,19 +65,19 @@ namespace Tests
         [Test]
         public void UniqueCollectionAddIntExpectingExceptionTest()
         {
-            _tryAddingAnElementToUniqueCollection(_addFunctionMethod<int>, new Collection<int>{1, 2, 3, 1});
+            TryAddingAnElementToUniqueCollection(AddFunctionMethod<int>, new Collection<int>{1, 2, 3, 1});
         }
         
         [Test]
         public void UniqueCollectionAddDoubleTest()
         {
-            _tryAddingAnElementToUniqueCollection(_addFunctionMethod<double>, new Collection<double>{2.1545, 4312, Math.PI, 1});
+            TryAddingAnElementToUniqueCollection(AddFunctionMethod<double>, new Collection<double>{2.1545, 4312, Math.PI, 1});
         }
         
         [Test]
         public void UniqueCollectionAddPersonExpectingExceptionTest()
         {
-            _tryAddingAnElementToUniqueCollection(_addFunctionMethod<Person>, new Collection<Person> {_personOne, _personTwo, _personThree});
+            TryAddingAnElementToUniqueCollection(AddFunctionMethod<Person>, new Collection<Person> {_personOne, _personTwo, _personThree});
         }
 
     }

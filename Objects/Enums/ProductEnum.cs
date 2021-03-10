@@ -1,4 +1,4 @@
-namespace TwoLayerSolution
+namespace TwoLayerSolution.Enums
 {
     public enum ProductEnum
     {

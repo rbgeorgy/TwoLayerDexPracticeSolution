@@ -1,6 +1,6 @@
 using System;
 
-namespace TwoLayerSolution
+namespace TwoLayerSolution.Extensions
 {
     public static class IntForTimeSpanExtension
     {
@@ -24,7 +24,7 @@ namespace TwoLayerSolution
             {
                 return new TimeSpan(Math.Abs(value), 0, 0);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new ArgumentOutOfRangeException("Переполнение TimeSpan!");
             }

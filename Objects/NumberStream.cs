@@ -17,10 +17,10 @@ namespace TwoLayerSolution
         public NumberStream(Collection<double> numberStream)
         {
             _numberStream = numberStream ?? throw new ArgumentNullException("Передайте в конструктор потока чисел существующую коллекцию");
-            _calculateAverageValue();
+            CalculateAverageValue();
         }
 
-        private void _calculateAverageValue()
+        private void CalculateAverageValue()
         {
             double sum = 0;
             foreach (var item in _numberStream)

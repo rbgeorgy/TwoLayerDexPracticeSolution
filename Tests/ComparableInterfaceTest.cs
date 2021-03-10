@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using TwoLayerSolution;
+using TwoLayerSolution.Comparers;
 
 
 namespace Tests
@@ -8,55 +9,60 @@ namespace Tests
     [TestFixture]
     public class ComparableInterfaceTest
     {
-        private Figure[] _figureArray;
-
         private enum SortParameters { Square, Perimeter }
 
-        private void _generate()
+        private Figure[] Generate()
         {
             var rand = new Random();
-            _figureArray = new Figure[100];
-            for (int i = 0; i < _figureArray.Length; i++)
+            Figure[] figureArray = new Figure[100];
+            for (int i = 0; i < figureArray.Length; i++)
             {
                 switch (i % 3)
                 {
                     case 0:
-                        _figureArray[i] = new Circle(rand.Next(1, 10));
+                        figureArray[i] = new Circle(rand.Next(1, 10));
                         break;
                     case 1:
-                        _figureArray[i] = new Rectangle(rand.Next(1, 5), rand.Next(1, 5));
+                        figureArray[i] = new Rectangle(rand.Next(1, 5), rand.Next(1, 5));
                         break;
                     case 2:
                         int aSide = rand.Next(5, 10);
                         int bSide = rand.Next(5, 10);
                         int cSide = (int) ((aSide + bSide) * 0.5);
-                        _figureArray[i] = new Triangle(aSide, bSide, cSide);
+                        figureArray[i] = new Triangle(aSide, bSide, cSide);
                         break;
                 }
             }
+            return figureArray;
         }
 
-        private void _sortBySquare()
+        private Figure[] SortBySquare()
         {
-            Array.Sort(_figureArray);
+            Figure[] figureArray = Generate();
+            Array.Sort(figureArray);
+            return figureArray;
         }
 
-        private void _sortBySquareWithExternalComparer()
+        private Figure[] SortBySquareWithExternalComparer()
         {
-            Array.Sort(_figureArray, new SquareFigureComparer());
+            Figure[] figureArray = Generate();
+            Array.Sort(figureArray, new SquareFigureComparer());
+            return figureArray;
         }
         
-        private void _sortByPerimeterWithExternalComparer()
+        private Figure[] SortByPerimeterWithExternalComparer()
         {
-            Array.Sort(_figureArray, new PerimeterFigureComparer());
+            Figure[] figureArray = Generate();
+            Array.Sort(figureArray, new PerimeterFigureComparer());
+            return figureArray;
         }
 
-        private void _printArray(string parameter)
+        private void PrintArray(string parameter, Figure[] figureArray)
         {
             if (parameter == null) throw new ArgumentException("Нельзя печатать без параметра");
             else
             {
-                foreach (var item in _figureArray)
+                foreach (var item in figureArray)
                 {
                     double toPrint = parameter=="с площадью" ? item.GetSquare() : item.GetPerimeter();
                     Console.WriteLine(item + ", " + parameter + ": " + toPrint);
@@ -65,7 +71,7 @@ namespace Tests
             }
         }
         
-        private bool _isSorted(Figure[] array, SortParameters parameters)
+        private bool IsSorted(Figure[] array, SortParameters parameters)
         {
             if (array == null) throw new ArgumentException("Передайте существующий массив для проверки.");
             for (int i = 1; i < array.Length; i++)
@@ -83,31 +89,31 @@ namespace Tests
         [SetUp]
         public void SetUp()
         {
-            _generate();
+            Generate();
         }
 
         [Test]
         public void SortBySquareTest1()
         {
-            _sortBySquare();
-            _printArray("с площадью");
-            Assert.True(_isSorted(_figureArray, SortParameters.Square));
+            Figure[] figureArray = SortBySquare();
+            PrintArray("с площадью", figureArray);
+            Assert.True(IsSorted(figureArray, SortParameters.Square));
         }
         
         [Test]
         public void SortBySquareWithExternalComparerTest()
         {
-            _sortBySquareWithExternalComparer();
-            _printArray("с площадью");
-            Assert.True(_isSorted(_figureArray, SortParameters.Square));
+            Figure[] figureArray = SortBySquareWithExternalComparer();
+            PrintArray("с площадью", figureArray);
+            Assert.True(IsSorted(figureArray, SortParameters.Square));
         }
         
         [Test]
         public void SortByPerimeterWithExternalComparerTest()
         {
-            _sortByPerimeterWithExternalComparer();
-            _printArray("с периметром");
-            Assert.True(_isSorted(_figureArray, SortParameters.Perimeter));
+            Figure[] figureArray = SortByPerimeterWithExternalComparer();
+            PrintArray("с периметром", figureArray);
+            Assert.True(IsSorted(figureArray, SortParameters.Perimeter));
         }
     }
 }
