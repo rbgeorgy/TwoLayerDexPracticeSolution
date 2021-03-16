@@ -1321,7 +1321,7 @@ namespace TwoLayerSolution
 
         readonly Random _random = new Random();
 
-        private Person GeneratePerson()
+        public Person GeneratePerson()
         {
             return new Person(
             _names[_random.Next(0, _names.Length)] + " " + _surnames[_random.Next(0, _surnames.Length)] + " " + _patronymic[_random.Next(0, _patronymic.Length)], 
@@ -1331,7 +1331,7 @@ namespace TwoLayerSolution
             );
         }
 
-        public Person[] GeneratePersonArray(int length)
+        public IEnumerable<Person> GeneratePersonArray(int length)
         {
             Person[] array = new Person[length];
             for (int i = 0; i < length; i++)

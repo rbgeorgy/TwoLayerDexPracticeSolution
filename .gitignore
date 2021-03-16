@@ -6,3 +6,5 @@
 /Tests/obj
 TwoLayerSolution.sln.DotSettings.user
 /Tests/packages.config
+/SimpleEmployeeCatalogDemo/bin
+/SimpleEmployeeCatalogDemo/obj
