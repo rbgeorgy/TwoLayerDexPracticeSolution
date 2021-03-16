@@ -10,13 +10,6 @@ namespace TwoLayerSolution
         public readonly String BirthPlace;
         public readonly String PassportNumber;
         
-        
-        private bool PassportNumberValidator(String number)
-        {
-            Regex rgx = new Regex("^(?!^0+$)[a-zA-Z0-9]{3,20}$");
-            return rgx.IsMatch(number);
-        }
-
         public Person(String nameSurname, String dateOfBirth, String birthPlace, String passportNumber)
         {
             if (nameSurname == null || dateOfBirth == null || birthPlace == null || passportNumber == null)
@@ -25,10 +18,7 @@ namespace TwoLayerSolution
             NameSurname = nameSurname;
 
             DateOfBirth = dateOfBirth;
-
-            if (PassportNumberValidator(passportNumber)) PassportNumber = passportNumber;
-            else throw new ArgumentNullException(passportNumber + " - не номер паспорта");
-
+            PassportNumber = passportNumber;
             BirthPlace = birthPlace;
         }
 
@@ -48,6 +38,17 @@ namespace TwoLayerSolution
             {
                 throw new ArgumentException("Сравниваемый объект не Person.");
             }
+        }
+
+        public static bool operator ==(Person first, Person second)
+        {
+            if (first == null || second == null) throw new ArgumentNullException("Нельзя сравнивать с null.");
+            return first.Equals(second);
+        }
+
+        public static bool operator !=(Person first, Person second)
+        {
+            return !(first == second);
         }
 
         public override int GetHashCode()

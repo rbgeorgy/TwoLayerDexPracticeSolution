@@ -9,7 +9,12 @@ namespace TwoLayerSolution
 
         public EmployeeCatalog(Dictionary<Person, string> placeOfWorkDirectory)
         {
-            _placeOfWorkDirectory = placeOfWorkDirectory;
+            _placeOfWorkDirectory = placeOfWorkDirectory ?? throw new ArgumentNullException("Словарь не может быть null.");
+        }
+
+        public EmployeeCatalog()
+        {
+            _placeOfWorkDirectory = new Dictionary<Person, string>();
         }
 
         public bool MakeRequest(string name, string date, string place, string number)

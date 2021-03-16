@@ -61,23 +61,38 @@ namespace Tests
                 "AA2281337"
             );
         }
-        //TODO: Assert with exceptions
+
+        private void ThrowArgumentExceptionWhileAddExistingInt()
+        {
+            TryAddingAnElementToUniqueCollection(AddFunctionMethod<int>, new Collection<int> {1, 2, 3, 1});
+        }
+        
+        private void ThrowArgumentExceptionWhileAddExistingPerson()
+        {
+            TryAddingAnElementToUniqueCollection(AddFunctionMethod<int>, new Collection<int> {1, 2, 3, 1});
+        }
+        
+        private void DoesNotThrowArgumentExceptionWhileAddExistingDouble()
+        {
+            TryAddingAnElementToUniqueCollection(AddFunctionMethod<double>, new Collection<double>{2.1545, 4312, Math.PI, 1});
+        }
+
         [Test]
         public void UniqueCollectionAddIntExpectingExceptionTest()
         {
-            TryAddingAnElementToUniqueCollection(AddFunctionMethod<int>, new Collection<int>{1, 2, 3, 1});
+            Assert.Throws<ArgumentException>(ThrowArgumentExceptionWhileAddExistingInt);
         }
         
         [Test]
         public void UniqueCollectionAddDoubleTest()
         {
-            TryAddingAnElementToUniqueCollection(AddFunctionMethod<double>, new Collection<double>{2.1545, 4312, Math.PI, 1});
+            Assert.DoesNotThrow(DoesNotThrowArgumentExceptionWhileAddExistingDouble);
         }
         
         [Test]
         public void UniqueCollectionAddPersonExpectingExceptionTest()
         {
-            TryAddingAnElementToUniqueCollection(AddFunctionMethod<Person>, new Collection<Person> {_personOne, _personTwo, _personThree});
+            Assert.Throws<ArgumentException>(ThrowArgumentExceptionWhileAddExistingPerson);
         }
 
     }

@@ -6,7 +6,7 @@ namespace Tests
 {
     public class EqualsTest
     {
-        //TODO: Переработать для параллельных запусков; Переопределить ==;
+        //TODO: Переработать для параллельных запусков;
         //TODO: List contains
         private Person _personOne;
         private Person _personTwo;

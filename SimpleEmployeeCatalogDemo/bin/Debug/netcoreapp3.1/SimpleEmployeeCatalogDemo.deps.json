@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "SimpleEmployeeCatalogDemo/1.0.0": {
+        "dependencies": {
+          "Objects": "1.0.0"
+        },
+        "runtime": {
+          "SimpleEmployeeCatalogDemo.dll": {}
+        }
+      },
+      "Objects/1.0.0": {
+        "runtime": {
+          "Objects.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "SimpleEmployeeCatalogDemo/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Objects/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -123,7 +123,7 @@ namespace Tests
         }
 
         [Test]
-        public void WhereGroupBySelectTest()
+        public void WhereGroupBySelectTest()//TODO: ASSERTION
         {
             var products = Generate();
             var isAvailableQueryResult = products.Where(p => p.IsAvailable).GroupBy(p => p.ProductName)
