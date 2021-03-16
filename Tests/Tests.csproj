@@ -74,6 +74,9 @@
         <Compile Include="..\Objects\PersonGenerator.cs">
           <Link>Objects\PersonGenerator.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\PersonWithBadHashCode.cs">
+          <Link>Objects\PersonWithBadHashCode.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\Product.cs">
           <Link>Objects\Product.cs</Link>
         </Compile>

@@ -1330,6 +1330,16 @@ namespace TwoLayerSolution
             _passportNumbers[_random.Next(0, _passportNumbers.Length)]
             );
         }
+        
+        public PersonWithBadHashCode GeneratePersonWithBadHashCode()
+        {
+            return new PersonWithBadHashCode(
+                _names[_random.Next(0, _names.Length)] + " " + _surnames[_random.Next(0, _surnames.Length)] + " " + _patronymic[_random.Next(0, _patronymic.Length)], 
+                _datesOfBirth[_random.Next(0, _datesOfBirth.Length)],
+                _towns[_random.Next(0, _towns.Length)], 
+                _passportNumbers[_random.Next(0, _passportNumbers.Length)]
+            );
+        }
 
         public IEnumerable<Person> GeneratePersonArray(int length)
         {
@@ -1356,6 +1366,29 @@ namespace TwoLayerSolution
                     while (dictionary.ContainsKey(toAdd))
                     {
                         toAdd = GeneratePerson();
+                    }
+                    dictionary.Add(toAdd, _companies[random.Next(0, _companies.Length)]);
+                    sw.WriteLine(toAdd);
+                }   
+            }
+            return dictionary;
+        }
+        
+        public Dictionary<PersonWithBadHashCode, string> GeneratePersonWithBadHashCodeWorkPlaceDictionary(int length)
+        {
+            var directory = Directory.GetCurrentDirectory();
+            var writePath = directory + "/GeneratePersonWorkPlaceDictionaryOutput.txt";
+            Console.WriteLine("Найти подробный список работников можно здесь: " + directory);
+            var random = new Random();
+            var dictionary = new Dictionary<PersonWithBadHashCode, string>();
+            using (StreamWriter sw = new StreamWriter(writePath, true, System.Text.Encoding.Default))
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    var toAdd = GeneratePersonWithBadHashCode();
+                    while (dictionary.ContainsKey(toAdd))
+                    {
+                        toAdd = GeneratePersonWithBadHashCode();
                     }
                     dictionary.Add(toAdd, _companies[random.Next(0, _companies.Length)]);
                     sw.WriteLine(toAdd);

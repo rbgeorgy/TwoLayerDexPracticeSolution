@@ -10,11 +10,9 @@ namespace Tests
 {
     public class DictionaryTest
     {
-        //TODO: Переработать для параллельных запусков; Переопределить ==; HashCode, Equals
-        //TODO: исследовать скорость работы словаря, в случае если хеш-код всегда один и тот же
-        private delegate bool ToMeasure(Person person);
+        private delegate bool ToMeasure<in T>(T person);
 
-        private long MeasureExecutionTime(ToMeasure method, Person person)
+        private long MeasureExecutionTime<T>(ToMeasure<T> method, T person)
         {
             method.Invoke(person);
             Stopwatch stopWatch = new Stopwatch();
@@ -33,6 +31,17 @@ namespace Tests
             var list = generator.GeneratePersonArray(100000).ToList();
             var findInListTime = MeasureExecutionTime(list.Contains, generator.GeneratePerson());
             Assert.IsTrue(findInListTime > findInDictionaryTime);
+        }
+
+        [Test]
+        public void DictionaryWithKeyWithBadHashCodeVsKeyWithNormalHashCode()
+        {
+            var generator = new PersonGenerator();
+            var dictionary = generator.GeneratePersonWorkPlaceDictionary(10000);
+            var dictionaryWithKeyWithBadHashCode = generator.GeneratePersonWithBadHashCodeWorkPlaceDictionary(10000);
+            var findInDictionaryTime =  MeasureExecutionTime(dictionary.ContainsKey, generator.GeneratePerson());
+            var findInDictionaryWithKeyWithBadHashCodeTime =  MeasureExecutionTime(dictionaryWithKeyWithBadHashCode.ContainsKey, generator.GeneratePersonWithBadHashCode());
+            Assert.IsTrue(findInDictionaryWithKeyWithBadHashCodeTime > findInDictionaryTime);
         }
 
     }
