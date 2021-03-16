@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using NUnit.Framework;
 using TwoLayerSolution;
 
@@ -7,59 +9,21 @@ namespace Tests
 {
     public class GenericTest
     {
-        private Person _personOne;
-        private Person _personTwo;
-        private Person _personThree;
-        private delegate void AddFunction<T>(UniqueCollection<T> uniqueCollection, Collection<T> toAdd);
+        private delegate void AddFunction<T>(UniqueCollection<T> uniqueCollection, ICollection<T> toAdd);
         
-        private void TryAddingAnElementToUniqueCollection<T>(AddFunction<T> addFunction, Collection<T> toAdd)
+        private void TryAddingAnElementToUniqueCollection<T>(AddFunction<T> addFunction, ICollection<T> toAdd)
         {
             UniqueCollection<T> uniqueCollection = new UniqueCollection<T>();
-            try
-            {
+
                 addFunction(uniqueCollection, toAdd);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            finally
-            {
-                uniqueCollection.Print();
-            }
         }
         
-        private void AddFunctionMethod<T>(UniqueCollection<T> uniqueCollection, Collection<T> toAdd)
+        private void AddFunctionMethod<T>(UniqueCollection<T> uniqueCollection, ICollection<T> toAdd)
         {
             foreach (T item in toAdd)
             {
                 uniqueCollection.Add(item);
             }
-        }
-
-        [SetUp]
-        public void SetUp()
-        {
-            _personOne = new Person(
-                "Ivanov Ivan Ivanovich",
-                "01.01.1990",
-                "Nezavertailovka",
-                "AA2281337"
-            );
-            
-            _personTwo = new Person(
-                "Alekseyev Artyom Ivanovich",
-                "21.01.1991",
-                "Moscow",
-                "AA1488146"
-            );
-
-            _personThree = new Person(
-                "Ivanov Ivan Ivanovich",
-                "01.01.1990",
-                "Nezavertailovka",
-                "AA2281337"
-            );
         }
 
         private void ThrowArgumentExceptionWhileAddExistingInt()
@@ -69,7 +33,10 @@ namespace Tests
         
         private void ThrowArgumentExceptionWhileAddExistingPerson()
         {
-            TryAddingAnElementToUniqueCollection(AddFunctionMethod<int>, new Collection<int> {1, 2, 3, 1});
+            var generator = new PersonGenerator();
+            var list = (generator.GeneratePersonArray(3)).ToList();
+            list.Add(list[0]);
+            TryAddingAnElementToUniqueCollection<Person>(AddFunctionMethod<Person>, list);
         }
         
         private void DoesNotThrowArgumentExceptionWhileAddExistingDouble()

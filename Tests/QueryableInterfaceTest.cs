@@ -14,6 +14,7 @@ namespace Tests
             "Xiaomi", "Lg", "Meizu", "Asus", "ZTE", "Acer" };
 
         private enum MoreThenLessThen { MoreThan, LessThan }
+        private enum MinMax { Min, Max }
 
         private DateTime UnixTimeStampToDateTime( double unixTimeStamp )
         {
@@ -87,6 +88,38 @@ namespace Tests
             }
             return false;
         }
+        
+        private bool CheckMaxMinSingleBrandProductAvailability(Product[] products, int toCheck, MinMax parameter)
+        {
+            var dictionary = new Dictionary<string, int>();
+            foreach (var item in products)
+            {
+                if (!dictionary.ContainsKey(item.ProductName) && item.IsAvailable)
+                {
+                    dictionary[item.ProductName] = item.Number;
+                }
+                else
+                {
+                    if (item.IsAvailable)
+                        dictionary[item.ProductName] += item.Number;
+                }
+            }
+            var previous = dictionary.Values.First();
+            foreach (var keyValue in dictionary.Values)
+            {
+                if (
+                    parameter == MinMax.Max ?
+                    keyValue > previous : 
+                    keyValue < previous
+                        )
+                {
+                    previous = keyValue;
+                }
+            }
+
+            Console.WriteLine(previous + "  " + toCheck);
+            return toCheck == previous;
+        }
 
         [Test]
         public void WhereOrderByQueryTest()
@@ -134,8 +167,9 @@ namespace Tests
                 int checkSum = item.productsWithCurrentName.Sum(p => p.Number);
                 sums.Add(checkSum);
             }
-            Console.WriteLine("Максимальное количество доступного товара одного бренда: " + sums.Max());
-            Console.WriteLine("Минимальное количество доступного товара одного бренда: " + sums.Min());
+
+            Assert.IsTrue(CheckMaxMinSingleBrandProductAvailability(products, sums.Max(), MinMax.Max));
+            Assert.IsTrue(CheckMaxMinSingleBrandProductAvailability(products, sums.Min(), MinMax.Min));
         }
     }
 }
