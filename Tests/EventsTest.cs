@@ -14,7 +14,7 @@ namespace Tests
         
         private void PrintIfProductNameChanged(object sender, PropertyChangedEventArgs e)
         {
-            Console.WriteLine("Изменилось свойство " + e.PropertyName + " продукта.Новое имя: " + sender);
+            Console.WriteLine("Изменилось свойство " + e.PropertyName + " продукта. Новое имя: " + sender);
         }
 
         private void PrintEventMessage(string message)
