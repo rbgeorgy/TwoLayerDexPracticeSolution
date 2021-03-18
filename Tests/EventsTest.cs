@@ -8,70 +8,89 @@ namespace Tests
 {
     public class EventsTest
     {
-        private Product _testingProduct;
-        private QueueWithEvents<int> _queueWithEvents;
-        private NumberStream _numberStream;
-        
-        private void PrintIfProductNameChanged(object sender, PropertyChangedEventArgs e)
-        {
-            Console.WriteLine("Изменилось свойство " + e.PropertyName + " продукта.Новое имя: " + sender);
-        }
-
-        private void PrintEventMessage(string message)
-        {
-            Console.WriteLine("Произошло событие: " + message);
-        }
-
-        [SetUp]
-        public void SetUp()
-        {
-            _testingProduct = new Product("RTX 3060", 42, DateTime.Today, true);
-            _testingProduct.PropertyChanged += PrintIfProductNameChanged;
-            _queueWithEvents = new QueueWithEvents<int>(3);
-            _queueWithEvents.QueueOverflow += PrintEventMessage;
-            _queueWithEvents.QueueUnderflow += PrintEventMessage;
-            _numberStream = new NumberStream(new Collection<double>{2.0, 12.99, 321, 421, 42144443.91});
-            _numberStream.TooBigDifferenceEvent += PrintEventMessage;
-        }
-
         [Test]
         public void OnProductNamePropertyChanged()
         {
-            _testingProduct.ProductName = "RTX 3070";
+            var testingProduct = new Product("RTX 3060", 42, DateTime.Today, true);
+            string propertyName = null;
+            testingProduct.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            {
+                propertyName = e.PropertyName;
+            };
+            testingProduct.ProductName = "RTX 3040";
+            Assert.IsNotNull(propertyName);
+            Assert.AreEqual("ProductName", propertyName);
         }
 
         [Test]
         public void QueueUnderflowTest()
         {
+            QueueWithEvents<int> queueWithEvents = new QueueWithEvents<int>(1);
+            string underflowMessage = null;
+            queueWithEvents.QueueUnderflow += delegate(string notify)
+            {
+                underflowMessage = notify;
+            };
             try
             {
-                _queueWithEvents.GetItem();
+                queueWithEvents.GetItem();
             }
             catch (Exception e)
             {
-                Console.WriteLine("Поймано исключение: " + e.Message);
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                Assert.IsNotNull(underflowMessage);
+                Assert.AreEqual("Очередь пуста!", underflowMessage);   
             }
         }
 
         [Test]
         public void QueueOverflowTest()
         {
+            QueueWithEvents<int> queueWithEvents = new QueueWithEvents<int>(3);
+            string overflowMessage = null;
+            queueWithEvents.QueueOverflow += delegate(string notify)
+            {
+                overflowMessage = notify;
+            };
             for (int i = 0; i < 4; i++)
             {
-                _queueWithEvents.AddItem(i);
+                queueWithEvents.AddItem(i);
             }
+       
+            Assert.IsNotNull(overflowMessage);
+            Assert.AreEqual("Переполнение очереди!", overflowMessage);
+            
         }
 
         [Test]
         public void AnalyzeStreamWithConstantTest()
         {
-            _numberStream.AnalyzeStreamWithConstant(1);
+            var numberStream = new NumberStream(new Collection<double>{2.0, 12.99, 321, 421, 42144443.91});
+            string differenceEventMessage = null;
+            numberStream.TooBigDifferenceEvent += delegate(string message)
+            {
+                differenceEventMessage = message;
+            };
+            numberStream.AnalyzeStreamWithConstant(1);
+            Assert.IsNotNull(differenceEventMessage);
+            Console.WriteLine(differenceEventMessage);
         }
         
         [Test]
         public void AnalyzeStreamWithCPercentageTest()
         {
-            _numberStream.AnalyzeStreamWithPercentage(15);
+            var numberStream = new NumberStream(new Collection<double>{2.0, 12.99, 321, 421, 42144443.91});
+            string differenceEventMessage = null;
+            numberStream.TooBigDifferenceEvent += delegate(string message)
+            {
+                differenceEventMessage = message;
+            };
+            numberStream.AnalyzeStreamWithPercentage(15);
+            Assert.IsNotNull(differenceEventMessage);
+            Console.WriteLine(differenceEventMessage);
         }
     }
 }

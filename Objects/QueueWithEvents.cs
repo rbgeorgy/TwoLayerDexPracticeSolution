@@ -31,7 +31,6 @@ namespace TwoLayerSolution
             if (_rear == _max - 1)
             {
                 QueueOverflow?.Invoke("Переполнение очереди!");
-                return;
             } 
             else { 
                 _elements[++_rear] = item; 
