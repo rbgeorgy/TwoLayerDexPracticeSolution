@@ -47,6 +47,9 @@
         <Compile Include="..\Objects\Circle.cs">
           <Link>Objects\Circle.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\ClassToDemonstrateReflection.cs">
+          <Link>Objects\ClassToDemonstrateReflection.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\Comparers\PerimeterFigureComparer.cs">
           <Link>Objects\Comparers\PerimeterFigureComparer.cs</Link>
         </Compile>
@@ -100,6 +103,7 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="QueryableInterfaceTest.cs" />
         <Compile Include="GenericTest.cs" />
+        <Compile Include="ReflectionTest.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="..\Objects\Objects.csproj">
