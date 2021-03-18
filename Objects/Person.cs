@@ -53,10 +53,10 @@ namespace TwoLayerSolution
 
         public override int GetHashCode()
         {
-            return NameSurname.GetHashCode() + 
-                   DateOfBirth.GetHashCode() + 
-                   BirthPlace.GetHashCode() +
-                   PassportNumber.GetHashCode();
+            return (NameSurname + 
+                   DateOfBirth + 
+                   BirthPlace +
+                   PassportNumber).GetHashCode();
         }
 
         public override string ToString()
