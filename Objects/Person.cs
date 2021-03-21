@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace TwoLayerSolution
 {
+    [Serializable]
     public class Person
     {
         public readonly String NameSurname;

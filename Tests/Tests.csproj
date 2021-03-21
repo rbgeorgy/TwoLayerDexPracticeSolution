@@ -89,6 +89,9 @@
         <Compile Include="..\Objects\Rectangle.cs">
           <Link>Objects\Rectangle.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\SerializableProduct.cs">
+          <Link>Objects\SerializableProduct.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\Triangle.cs">
           <Link>Objects\Triangle.cs</Link>
         </Compile>
@@ -104,6 +107,7 @@
         <Compile Include="QueryableInterfaceTest.cs" />
         <Compile Include="GenericTest.cs" />
         <Compile Include="ReflectionTest.cs" />
+        <Compile Include="SerializationTest.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="..\Objects\Objects.csproj">
