@@ -74,6 +74,9 @@
         <Compile Include="..\Objects\NumberStream.cs">
           <Link>Objects\NumberStream.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\ParametersAndType.cs">
+          <Link>Objects\ParametersAndType.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\Person.cs">
           <Link>Objects\Person.cs</Link>
         </Compile>
@@ -106,6 +109,7 @@
         <Compile Include="EqualsTest.cs" />
         <Compile Include="EventsTest.cs" />
         <Compile Include="ExtensionTest.cs" />
+        <Compile Include="MyDelegateTest.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="QueryableInterfaceTest.cs" />
         <Compile Include="GenericTest.cs" />

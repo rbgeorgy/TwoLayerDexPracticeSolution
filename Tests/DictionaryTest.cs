@@ -12,12 +12,26 @@ namespace Tests
     {
         private delegate bool ToMeasure<in T>(T person);
 
+        private delegate void ToMeasure2<in T>(T toAdd,
+            Dictionary<PersonWithBadHashCode, string> dict, int length);
+
         private long MeasureExecutionTime<T>(ToMeasure<T> method, T person)
         {
             method.Invoke(person);
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             method.Invoke(person);
+            stopWatch.Stop();
+            Console.WriteLine(stopWatch.ElapsedTicks);
+            return stopWatch.ElapsedTicks;
+        }
+
+        private long Measure2ExecutionTime<T>(ToMeasure2<PersonWithBadHashCode> method, PersonWithBadHashCode person, Dictionary<PersonWithBadHashCode, string> dict, int length)
+        {
+            method.Invoke(person, dict, length);
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            method.Invoke(person, dict, length);
             stopWatch.Stop();
             return stopWatch.ElapsedTicks;
         }
@@ -54,6 +68,15 @@ namespace Tests
             var findInDictionaryWithKeyWithBadHashCodeTime =  MeasureExecutionTime(dictionaryWithKeyWithBadHashCode.ContainsKey, generator.GeneratePersonWithBadHashCode());
             Assert.IsTrue(findInDictionaryWithKeyWithBadHashCodeTime > findInDictionaryTime);
         }
-
+        
+        [Test]
+        public void AddWithBadHashCodeVsNormalHashCode()
+        {
+            var generator = new PersonGenerator();
+            var dictionaryWithKeyWithBadHashCode = generator.GeneratePersonWithBadHashCodeWorkPlaceDictionary(10000);
+            var add10000ElementsWithBadHashCode =
+                Measure2ExecutionTime<PersonWithBadHashCode>(generator.AddPersonWithBadHashCode, generator.GeneratePersonWithBadHashCode(), dictionaryWithKeyWithBadHashCode, 1000);
+            Console.WriteLine(add10000ElementsWithBadHashCode);
+        }
     }
 }

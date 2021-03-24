@@ -1351,6 +1351,18 @@ namespace TwoLayerSolution
             return array;
         }
 
+        public void AddPersonWithBadHashCode(PersonWithBadHashCode toAdd, Dictionary<PersonWithBadHashCode, string> dict, int length)
+        {
+            for (int i = 0; i < length; i++)
+            {
+                while (dict.ContainsKey(toAdd))
+                {
+                    toAdd = GeneratePersonWithBadHashCode();
+                }
+                dict.Add(toAdd, _companies[6]);
+            }   
+        }
+
         public Dictionary<Person, string> GeneratePersonWorkPlaceDictionary(int length)
         {
             string directory = Directory.GetCurrentDirectory();
