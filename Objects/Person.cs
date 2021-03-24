@@ -10,7 +10,15 @@ namespace TwoLayerSolution
         public readonly String DateOfBirth;
         public readonly String BirthPlace;
         public readonly String PassportNumber;
-        
+
+        public Person()
+        {
+            NameSurname = "DefaultName";
+            DateOfBirth = "01.01.1970";
+            BirthPlace = "Default Birth Place";
+            PassportNumber = "1111111";
+        }
+
         public Person(String nameSurname, String dateOfBirth, String birthPlace, String passportNumber)
         {
             if (nameSurname == null || dateOfBirth == null || birthPlace == null || passportNumber == null)

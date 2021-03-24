@@ -89,8 +89,8 @@
         <Compile Include="..\Objects\Rectangle.cs">
           <Link>Objects\Rectangle.cs</Link>
         </Compile>
-        <Compile Include="..\Objects\SerializableProduct.cs">
-          <Link>Objects\SerializableProduct.cs</Link>
+        <Compile Include="..\Objects\SerializableProductWithOwner.cs">
+          <Link>Objects\SerializableProductWithOwner.cs</Link>
         </Compile>
         <Compile Include="..\Objects\Triangle.cs">
           <Link>Objects\Triangle.cs</Link>
