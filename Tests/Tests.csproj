@@ -68,6 +68,9 @@
         <Compile Include="..\Objects\Figure.cs">
           <Link>Objects\Figure.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\MyDelegate.cs">
+          <Link>Objects\MyDelegate.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\NumberStream.cs">
           <Link>Objects\NumberStream.cs</Link>
         </Compile>

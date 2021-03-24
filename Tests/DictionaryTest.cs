@@ -23,6 +23,17 @@ namespace Tests
         }
 
         [Test]
+        public void DictionaryVsListSpeed100ElementsTest()
+        {
+            var generator = new PersonGenerator();
+            var dictionary = generator.GeneratePersonWorkPlaceDictionary(100);
+            var findInDictionaryTime =  MeasureExecutionTime(dictionary.ContainsKey, generator.GeneratePerson());
+            var list = generator.GeneratePersonArray(100).ToList();
+            var findInListTime = MeasureExecutionTime(list.Contains, generator.GeneratePerson());
+            Assert.IsTrue(findInListTime <= findInDictionaryTime);
+        }
+        
+        [Test]
         public void DictionaryVsListSpeedTest()
         {
             var generator = new PersonGenerator();
