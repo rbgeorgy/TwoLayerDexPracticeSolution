@@ -11,11 +11,6 @@ namespace TwoLayerSolution
         public List<MethodInfo> ListOfMethods => _listOfMethods;
 
         public ParametersAndType SignatureOfFunction;
-        public MyDelegate()
-        {
-            _listOfMethods = new List<MethodInfo>();
-        }
-
         public MyDelegate(MethodInfo method)
         {
             if (method == null) throw new ArgumentNullException(nameof(method));
@@ -25,13 +20,10 @@ namespace TwoLayerSolution
 
         private bool ParametersInfoEquality(ParameterInfo[] first, ParameterInfo[] second)
         {
-            Console.WriteLine(first.Length + " " + second.Length);
-            
             if (first.Length != second.Length) return false;
             for (int i = 0; i < first.Length; i++)
             {
-                Console.WriteLine(first[i] + " " + second[i]);
-                if (!first[i].Equals(second[i])) return false;
+                if (first[i].ParameterType != second[i].ParameterType) return false;
             }
             return true;
         }
@@ -41,10 +33,10 @@ namespace TwoLayerSolution
             if (method == null) throw new ArgumentNullException(nameof(method));
             if (_listOfMethods.Count == 0)
             {
+                _listOfMethods = new List<MethodInfo>();
                 SignatureOfFunction = new ParametersAndType(method.GetParameters(), method.ReturnType);
             }
-            if (method.ReturnType != SignatureOfFunction.ReturnType
-                //|| ParametersInfoEquality(method.GetParameters(), SignatureOfFunction.Parameters)
+            if (method.ReturnType != SignatureOfFunction.ReturnType || !ParametersInfoEquality(method.GetParameters(), SignatureOfFunction.Parameters)
             )
             {
                 throw new InvalidOperationException("Сигнатуры функций не совпадают");
@@ -54,9 +46,15 @@ namespace TwoLayerSolution
         }
         public static MyDelegate operator +(MyDelegate first, MyDelegate second)
         {
-            if (!first.SignatureOfFunction.Equals(second.SignatureOfFunction))
+            if (first == second)
             {
-                throw new InvalidOperationException("Сигнатуры функций не совпадают");
+                var newList = new List<MethodInfo>();
+                for (int i = 0; i < first.ListOfMethods.Count; i++)
+                {
+                    newList.Add(first.ListOfMethods[i]);
+                    if (i == first.ListOfMethods.Count - 1) i = 0;
+                }
+                first._listOfMethods = newList;
             }
 
             foreach (var methodInfo in second.ListOfMethods)
@@ -72,6 +70,12 @@ namespace TwoLayerSolution
             if (!first.SignatureOfFunction.Equals(second.SignatureOfFunction))
             {
                 throw new InvalidOperationException("Сигнатуры функций не совпадают");
+            }
+            
+            if (first == second)
+            {
+                first._listOfMethods.Clear();
+                first.SignatureOfFunction.Clear();
             }
 
             if (first.ListOfMethods.Count == 0) return first;
@@ -97,9 +101,9 @@ namespace TwoLayerSolution
                     {
                         return methodInfo.Invoke(classInstance, parameters);
                     }
-                    catch (Exception ex)
+                    catch (Exception exception)
                     {
-                        Console.WriteLine(ex.Message);
+                        if (exception.InnerException != null) Console.WriteLine(exception.InnerException.Message);
                     }
                 }
             }

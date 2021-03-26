@@ -1,12 +1,13 @@
 using System;
+using System.Data;
 using System.Reflection;
 
 namespace TwoLayerSolution
 {
     public class ParametersAndType : IEquatable<ParametersAndType>
     {
-        public readonly ParameterInfo[] Parameters;
-        public readonly Type ReturnType;
+        public ParameterInfo[] Parameters;
+        public Type ReturnType;
 
         public ParametersAndType(ParameterInfo[] parameterInfos, Type returnType)
         {
@@ -20,6 +21,12 @@ namespace TwoLayerSolution
             }
             else throw new ArgumentNullException();
             this.ReturnType = returnType ?? throw new ArgumentNullException(nameof(returnType));
+        }
+
+        public void Clear()
+        {
+            Parameters = null;
+            ReturnType = null;
         }
 
         public bool Equals(ParametersAndType other)

@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Reflection;
+using System.Diagnostics;
 using NUnit.Framework;
 using TwoLayerSolution;
 
@@ -16,38 +15,42 @@ namespace Tests
 
         public int MethodThatThrows(int a, int b)
         {
-            throw new Exception("Исключение");
+            throw new Exception("Внезапное исключение в стеке вызовов!");
         }
 
-        public int ChangeSecondInt(int x, ref int a)
+        [Test]
+        public void SimpleMyDelegateTest()
         {
-            a = x;
-            return a;
+            var type = Type.GetType(this.ToString());
+            Debug.Assert(type != null, nameof(type) + " != null");
+            var multiplicationMethodInfo = type.GetMethod(nameof(this.Multiplication));
+            
+            var myDelegate = new MyDelegate(multiplicationMethodInfo);
+            Assert.AreEqual(120, myDelegate.Invoke(this, new object[]{10, 12}));
         }
 
         [Test]
         public void IgnoreExceptionTest()
         {
-            var myDelegate = new MyDelegate();
-            int secondInt = 12;
+            var type = Type.GetType(this.ToString());
+            Debug.Assert(type != null, nameof(type) + " != null");
             
-            var type = Type.GetType("Tests.MyDelegateTest");
-            var classInstance = Activator.CreateInstance(type);
-            MethodInfo multiplicationMethodInfo = type.GetMethod("Multiplication");
-            myDelegate.AddMethod(multiplicationMethodInfo);
-            Assert.AreEqual(120, myDelegate.Invoke(classInstance, new object[]{10, secondInt}));
-            
-            MethodInfo methodThatThrowsInfo = type.GetMethod("MethodThatThrows");
-            myDelegate.AddMethod(methodThatThrowsInfo);
-            myDelegate.AddMethod(methodThatThrowsInfo);
-            myDelegate.AddMethod(methodThatThrowsInfo);
-            myDelegate.AddMethod(methodThatThrowsInfo);
-            myDelegate.Invoke(classInstance, new object[] {10, secondInt});
-            
-            MethodInfo changeSecondIntInfo = type.GetMethod("ChangeSecondInt");
-            myDelegate.AddMethod(changeSecondIntInfo);
+            var multiplicationMethodInfo = type.GetMethod(nameof(this.Multiplication));
+            var myDelegate = new MyDelegate(multiplicationMethodInfo);
 
-            Console.WriteLine(myDelegate.Invoke(classInstance, new object[] {10, secondInt}));
+            var methodThatThrowsInfo = type.GetMethod(nameof(this.MethodThatThrows));
+            myDelegate -= myDelegate;
+            myDelegate += new MyDelegate(methodThatThrowsInfo);
+            myDelegate += new MyDelegate(methodThatThrowsInfo);
+            myDelegate += new MyDelegate(methodThatThrowsInfo);
+            myDelegate += new MyDelegate(methodThatThrowsInfo);
+
+            var anotherMyDelegate = new MyDelegate(multiplicationMethodInfo);
+            myDelegate += anotherMyDelegate;
+
+            var result = myDelegate.Invoke(this, new object[] {32, 10});
+            Assert.AreEqual(320, (int) result);
+            Console.WriteLine("Результат после ошибок: " + result);
         }
     }
 }
