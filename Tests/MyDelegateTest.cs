@@ -50,7 +50,7 @@ namespace Tests
 
             var result = myDelegate.Invoke(this, new object[] {32, 10});
             Assert.AreEqual(320, (int) result);
-            Console.WriteLine("Результат после ошибок: " + result);
+            Console.WriteLine("Результат после исключений: " + result);
         }
     }
 }
