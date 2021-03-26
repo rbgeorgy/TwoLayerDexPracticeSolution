@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace TwoLayerSolution
@@ -49,12 +50,9 @@ namespace TwoLayerSolution
             if (first == second)
             {
                 var newList = new List<MethodInfo>();
-                for (int i = 0; i < first.ListOfMethods.Count; i++)
-                {
-                    newList.Add(first.ListOfMethods[i]);
-                    if (i == first.ListOfMethods.Count - 1) i = 0;
-                }
-                first._listOfMethods = newList;
+                newList = newList.Concat(first.ListOfMethods).ToList();
+                first._listOfMethods = newList.Concat(first.ListOfMethods).ToList();
+                return first;
             }
 
             foreach (var methodInfo in second.ListOfMethods)

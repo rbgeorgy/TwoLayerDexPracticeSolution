@@ -42,8 +42,7 @@ namespace Tests
             myDelegate -= myDelegate;
             myDelegate += new MyDelegate(methodThatThrowsInfo);
             myDelegate += new MyDelegate(methodThatThrowsInfo);
-            myDelegate += new MyDelegate(methodThatThrowsInfo);
-            myDelegate += new MyDelegate(methodThatThrowsInfo);
+            myDelegate += myDelegate;
 
             var anotherMyDelegate = new MyDelegate(multiplicationMethodInfo);
             myDelegate += anotherMyDelegate;
