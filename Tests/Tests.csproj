@@ -13,6 +13,7 @@
         <AssemblyName>Tests</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
@@ -47,6 +48,9 @@
         <Compile Include="..\Objects\Circle.cs">
           <Link>Objects\Circle.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\CircleCollectionReverser.cs">
+          <Link>Objects\CircleCollectionReverser.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\ClassToDemonstrateReflection.cs">
           <Link>Objects\ClassToDemonstrateReflection.cs</Link>
         </Compile>
@@ -68,6 +72,12 @@
         <Compile Include="..\Objects\Figure.cs">
           <Link>Objects\Figure.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\FigureInterfaces\IFigureCollectionReverser.cs">
+          <Link>Objects\FigureInterfaces\IFigureCollectionReverser.cs</Link>
+        </Compile>
+        <Compile Include="..\Objects\FigureInterfaces\IPrintFigureMethodsResults.cs">
+          <Link>Objects\FigureInterfaces\IPrintFigureMethodsResults.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\MyDelegate.cs">
           <Link>Objects\MyDelegate.cs</Link>
         </Compile>
@@ -85,6 +95,9 @@
         </Compile>
         <Compile Include="..\Objects\PersonWithBadHashCode.cs">
           <Link>Objects\PersonWithBadHashCode.cs</Link>
+        </Compile>
+        <Compile Include="..\Objects\PrintFigureMethodsResults.cs">
+          <Link>Objects\PrintFigureMethodsResults.cs</Link>
         </Compile>
         <Compile Include="..\Objects\Product.cs">
           <Link>Objects\Product.cs</Link>
@@ -105,6 +118,7 @@
           <Link>Objects\UniqueCollection.cs</Link>
         </Compile>
         <Compile Include="ComparableInterfaceTest.cs" />
+        <Compile Include="CovarianсeCounterCovarianсeTest.cs" />
         <Compile Include="DictionaryTest.cs" />
         <Compile Include="EqualsTest.cs" />
         <Compile Include="EventsTest.cs" />

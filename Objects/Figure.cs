@@ -6,7 +6,7 @@ namespace TwoLayerSolution
     {
         public abstract double GetSquare();
         public abstract double GetPerimeter();
-        
+
         private const double Precision = 0.00001;
         public int CompareTo(object other)
         {
