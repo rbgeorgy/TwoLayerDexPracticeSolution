@@ -47,7 +47,14 @@ namespace TwoLayerSolution
             }
             else
             {
-                _placeOfWorkDirectory[key] = value;
+                try
+                {
+                    _placeOfWorkDirectory[key] = value;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Person не был уникальным. " + e);
+                }
             }
         }
     }

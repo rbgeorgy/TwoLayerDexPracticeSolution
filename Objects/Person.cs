@@ -71,9 +71,9 @@ namespace TwoLayerSolution
         public override string ToString()
         {
             return "Имя: " + NameSurname + 
-                              ", Дата Рождения: " + DateOfBirth +
-                              ", Место рождения " + BirthPlace +
-                              ", Номер паспорта: " + PassportNumber;
+                              " Дата Рождения: " + DateOfBirth +
+                              " Место рождения " + BirthPlace +
+                              " Номер паспорта: " + PassportNumber;
         }
     }
 }

@@ -69,6 +69,9 @@
         <Compile Include="..\Objects\Extensions\IntForTimeSpanExtension.cs">
           <Link>Objects\Extensions\IntForTimeSpanExtension.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\Extensions\PersonToHtmlExtension.cs">
+          <Link>Objects\Extensions\PersonToHtmlExtension.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\Figure.cs">
           <Link>Objects\Figure.cs</Link>
         </Compile>
@@ -89,6 +92,9 @@
         </Compile>
         <Compile Include="..\Objects\Person.cs">
           <Link>Objects\Person.cs</Link>
+        </Compile>
+        <Compile Include="..\Objects\PersonCatalog.cs">
+          <Link>Objects\PersonCatalog.cs</Link>
         </Compile>
         <Compile Include="..\Objects\PersonGenerator.cs">
           <Link>Objects\PersonGenerator.cs</Link>
@@ -124,6 +130,7 @@
         <Compile Include="EventsTest.cs" />
         <Compile Include="ExtensionTest.cs" />
         <Compile Include="MyDelegateTest.cs" />
+        <Compile Include="PersonCatalogTest.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="QueryableInterfaceTest.cs" />
         <Compile Include="GenericTest.cs" />

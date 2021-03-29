@@ -28,7 +28,7 @@ namespace Tests
             {
                 IPrintFigureMethodsResults<Triangle> printFigureMethodsResults =
                     new PrintFigureMethodsResults<Figure>();
-                printFigureMethodsResults.PrintToConsoleFigureMethodsResults(new Triangle(3, 4, 5)); ;
+                printFigureMethodsResults.PrintToConsoleFigureMethodsResultsUsingEvent(new Triangle(3, 4, 5)); ;
             });
         }
     }

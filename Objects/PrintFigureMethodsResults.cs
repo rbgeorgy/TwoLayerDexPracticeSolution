@@ -8,7 +8,7 @@ namespace TwoLayerSolution
         public delegate void Notifier(string message);
         public event Notifier Notify;
         
-        public void PrintToConsoleFigureMethodsResults(T figure)
+        public void PrintToConsoleFigureMethodsResultsUsingEvent(T figure)
         {
             var message = "Площадь фигуры: " + figure.GetSquare() + "\nПериметр фигуры: " + figure.GetPerimeter();
             if (Notify == null)
