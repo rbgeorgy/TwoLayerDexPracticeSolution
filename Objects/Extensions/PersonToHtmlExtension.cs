@@ -14,32 +14,45 @@ namespace TwoLayerSolution
                     <html>
                 <head>
                 <style>
-                table, th, td {
-                border: 1px solid black;
-            }
-            </style>
+                                        table {
+                      font-family: arial, sans-serif;
+                      border-collapse: collapse;
+                      width: 100%;
+                    }
+
+                    td, th {
+                      border: 1px solid #dddddd;
+                      text-align: left;
+                      padding: 8px;
+                    }
+
+                    tr:nth-child(even) {
+                      background-color: #dddddd;
+                    }
+                </style>
                 </head>
                 <body>
                 <table style=""width:100%"">
                 <tr>
-                <th>ФИО</th>
-                <th>Дата рождения</th>
-                <th>Место рождения</th>
-                <th>Номер паспорта</th>
+                    <th>ФИО</th>
+                    <th>Дата рождения</th>
+                    <th>Место рождения</th>
+                    <th>Номер паспорта</th>
                 </tr>
                 <tr>
-                <td>" + person.NameSurname + @"</td>
-                <td>" + person.DateOfBirth + @"</td>
-                <td>" + person.BirthPlace + @"</td>
-                <td>" + person.PassportNumber + @"</td>
+                    <td>" + person.NameSurname + @"</td>
+                    <td>" + person.DateOfBirth + @"</td>
+                    <td>" + person.BirthPlace + @"</td>
+                    <td>" + person.PassportNumber + @"</td>
                 </tr>
                 </table>
 
                 </body>
                 </html>
                 ";
+            
             using (FileStream fileStream =
-                File.Open(directory + @"/Person" + person.GetHashCode(), FileMode.OpenOrCreate))
+                File.Open(directory + @"/Person" + person.GetHashCode() + ".html", FileMode.OpenOrCreate))
             {
                 byte[] content = new UTF8Encoding(true).GetBytes(htmlContent);
                 fileStream.Write(content, 0, content.Length);

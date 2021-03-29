@@ -52,13 +52,19 @@ namespace TwoLayerSolution
             }
         }
 
+        public Person GetPerson(int key)
+        {
+            if (_personDictionary.ContainsKey(key)) return _personDictionary[key];
+            else throw new ArgumentException("Нет Person с таким ключом");
+        }
+
         public void ChangePersonToPerson(Person oldPerson, Person newPerson)
         {
             DeletePerson(oldPerson);
             AddPerson(newPerson);
         }
 
-        public void ChangePersonName(Person person, PersonFields fieldToChange, string value)
+        public void ChangePersonField(Person person, PersonFields fieldToChange, string value)
         {
             var id = person.GetHashCode();
             if (!_personDictionary.ContainsKey(id)) return;

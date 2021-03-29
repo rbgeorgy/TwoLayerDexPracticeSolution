@@ -68,15 +68,5 @@ namespace Tests
             var findInDictionaryWithKeyWithBadHashCodeTime =  MeasureExecutionTime(dictionaryWithKeyWithBadHashCode.ContainsKey, generator.GeneratePersonWithBadHashCode());
             Assert.IsTrue(findInDictionaryWithKeyWithBadHashCodeTime > findInDictionaryTime);
         }
-        
-        [Test]
-        public void AddWithBadHashCodeVsNormalHashCode()
-        {
-            var generator = new PersonGenerator();
-            var dictionaryWithKeyWithBadHashCode = generator.GeneratePersonWithBadHashCodeWorkPlaceDictionary(10000);
-            var add10000ElementsWithBadHashCode =
-                Measure2ExecutionTime<PersonWithBadHashCode>(generator.AddPersonWithBadHashCode, generator.GeneratePersonWithBadHashCode(), dictionaryWithKeyWithBadHashCode, 1000);
-            Console.WriteLine(add10000ElementsWithBadHashCode);
-        }
     }
 }
