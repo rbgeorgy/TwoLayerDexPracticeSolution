@@ -128,7 +128,7 @@ namespace TwoLayerSolution
             return _personDictionary.Count;
         }
 
-        private Tuple<int, Person> ParseLine(string line)
+        private (int, Person) ParseLine(string line)
         {
             var words = line.Split(' ');
             var person = new Person(
@@ -137,7 +137,7 @@ namespace TwoLayerSolution
                 words[10],
                 words[13]
                 );
-            return new Tuple<int, Person>(Int32.Parse(words[0].Remove(0, 1)), person);
+            return (Int32.Parse(words[0].Remove(0, 1)), person);
         }
 
     }
