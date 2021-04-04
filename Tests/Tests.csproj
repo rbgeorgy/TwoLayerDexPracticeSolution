@@ -51,6 +51,9 @@
         <Compile Include="..\Objects\CircleCollectionReverser.cs">
           <Link>Objects\CircleCollectionReverser.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\ClassesUsingThreads\BigArrayCalculation.cs">
+          <Link>Objects\ClassesUsingThreads\BigArrayCalculation.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\ClassToDemonstrateReflection.cs">
           <Link>Objects\ClassToDemonstrateReflection.cs</Link>
         </Compile>
