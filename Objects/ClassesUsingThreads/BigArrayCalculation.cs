@@ -29,10 +29,18 @@ namespace TwoLayerSolution.ClassesUsingThreads
         private int[] _bigArray;
         public List<double> AveragesForSmall;
         public List<double> AveragesForBig;
+
+        public BigArrayCalculation()
+        {
+            AveragesForSmall = new List<double>();
+            AveragesForBig = new List<double>();
+        }
+
         public void Generate()
         {
             var rand = new Random();
             _smallArray = new int[10000000];
+           
             for (var i = 0; i < _smallArray.Length; i++)
             {
                 _smallArray[i] = rand.Next(0, 1000000);
@@ -45,7 +53,30 @@ namespace TwoLayerSolution.ClassesUsingThreads
             }
         }
 
-        public void CalculateAverage(object obj)
+        public void GenerateUsingThreads(SmallBig whichArray)
+        {
+            var rand = new Random();
+            _smallArray = new int[10000000];
+            var threads = new Thread[whichArray == SmallBig.Big ? 100 : 10];
+            for (var i = 0; i < threads.Length; i++)
+            {
+                threads[i] = new Thread(new ParameterizedThreadStart(GeneratePartial));
+                threads[i].Start(i);
+            }
+        }
+
+        private void GeneratePartial(object obj)
+        {
+            var rand = new Random();
+            var step = (int) obj;
+            
+            for (var i = 1000000*step; i < 1000000*(step + 1); i++)
+            {
+                _smallArray[i] = rand.Next(0, 1000000);
+            }
+        }
+
+        private void CalculateAverage(object obj)
         {
             double avgTemp = 0;
             int cnt = 0;
@@ -77,24 +108,15 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
         public void CalculateAverageWithThreads(SmallBig whichArray)
         {
-            for (int i = 0; i < 5; i++)
+            var threads = new Thread[whichArray == SmallBig.Big ? 100 : 10];
+            var parameters = new ParametersForThread[threads.Length];
+            const int step = 1000000;
+            for (var i = 0; i < threads.Length; i++)
             {
-                
+                threads[i] = new Thread(new ParameterizedThreadStart(CalculateAverage));
+                parameters[i] = new ParametersForThread(step*i, step*(i+1), whichArray);
+                threads[i].Start(parameters[i]);
             }
-
-            var firstThread = new Thread(new ParameterizedThreadStart(CalculateAverage));
-            var secondThread = new Thread(new ParameterizedThreadStart(CalculateAverage));
-            var thirdThread = new Thread(new ParameterizedThreadStart(CalculateAverage));
-            var fourthThread = new Thread(new ParameterizedThreadStart(CalculateAverage));
-            var fifthThread = new Thread(new ParameterizedThreadStart(CalculateAverage));
-
-            var firstParameters = new ParametersForThread(0, 2000000, whichArray);
-            var secondParameters = new ParametersForThread(2000000, 4000000, whichArray);
-            var thirdParameters = new ParametersForThread(4000000, 6000000, whichArray);
-            var fourthParameters = new ParametersForThread(6000000, 8000000, whichArray);
-            var fifthParameters = new ParametersForThread(8000000, 10000000, whichArray);
-            
-            firstThread.Start(firstParameters);
         }
 
         public double CalculateAverageInSmall()
@@ -106,6 +128,18 @@ namespace TwoLayerSolution.ClassesUsingThreads
         public double CalculateAverageInBig()
         {
             CalculateAverage(new ParametersForThread(0, _bigArray.Length, SmallBig.Big));
+            return AveragesForBig.Sum(avg => avg / AveragesForBig.Count);
+        }
+        
+        public double CalculateAverageInSmallWithThreads()
+        {
+            CalculateAverageWithThreads(SmallBig.Small);
+            return AveragesForSmall.Sum(avg => avg / AveragesForSmall.Count);
+        }
+        
+        public double CalculateAverageInBigWithThreads()
+        {
+            CalculateAverageWithThreads(SmallBig.Big);
             return AveragesForBig.Sum(avg => avg / AveragesForBig.Count);
         }
     }

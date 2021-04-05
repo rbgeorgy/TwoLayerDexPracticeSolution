@@ -139,6 +139,7 @@
         <Compile Include="GenericTest.cs" />
         <Compile Include="ReflectionTest.cs" />
         <Compile Include="SerializationTest.cs" />
+        <Compile Include="ThreadsTest.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="..\Objects\Objects.csproj">
