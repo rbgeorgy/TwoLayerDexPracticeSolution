@@ -40,7 +40,11 @@ namespace TwoLayerSolution.ClassesUsingThreads
         {
             //TODO: Exceptions
             if (action == null) throw new ArgumentNullException(nameof(action));
-            ThreadPool.QueueUserWorkItem(state=>{action();});
+            ThreadPool.QueueUserWorkItem(state =>
+            {
+                
+                action();
+            });
         }
 
         public void Clear()
@@ -53,11 +57,11 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
         private void OnTaskEnded(object sender, EventArgs e)
         {
-            if (sender is Action actionWrapperToRemove)
+            if (sender is Action actionToRemove)
             {
                 lock (_runningTasksLocker)
                 {
-                    _runningTasks.Remove(actionWrapperToRemove);
+                    _runningTasks.Remove(actionToRemove);
                 }
             }
             else throw new ArgumentException("Это событие должно быть для Action");
