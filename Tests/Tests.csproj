@@ -51,8 +51,17 @@
         <Compile Include="..\Objects\CircleCollectionReverser.cs">
           <Link>Objects\CircleCollectionReverser.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\ClassesUsingThreads\ActionWrapper.cs">
+          <Link>Objects\ClassesUsingThreads\ActionWrapper.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\ClassesUsingThreads\BigArrayCalculation.cs">
           <Link>Objects\ClassesUsingThreads\BigArrayCalculation.cs</Link>
+        </Compile>
+        <Compile Include="..\Objects\ClassesUsingThreads\TaskScheduler.cs">
+          <Link>Objects\ClassesUsingThreads\TaskScheduler.cs</Link>
+        </Compile>
+        <Compile Include="..\Objects\ClassesUsingThreads\IJobExecutor.cs">
+          <Link>Objects\ClassesUsingThreads\IJobExecutor.cs</Link>
         </Compile>
         <Compile Include="..\Objects\ClassToDemonstrateReflection.cs">
           <Link>Objects\ClassToDemonstrateReflection.cs</Link>

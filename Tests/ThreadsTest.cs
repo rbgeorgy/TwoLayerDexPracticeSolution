@@ -61,20 +61,6 @@ namespace Tests
         [Test]
         public void CalculateAverageWithoutThreadsVsWithThreadsSpeedTest()
         {
-            var bigArrayCalculation = new BigArrayCalculation();
-            bigArrayCalculation.Generate();
-            
-            var timeWithNoThreads =
-                GetGenerateTime(bigArrayCalculation.CalculateAverageInSmall, bigArrayCalculation.Generate)
-                + GetGenerateTime(bigArrayCalculation.CalculateAverageInBig, bigArrayCalculation.Generate);
-            
-            var timeWithThreads = GetGenerateTime(bigArrayCalculation.CalculateAverageInSmallWithThreads,
-                                      bigArrayCalculation.Generate)
-                                  + GetGenerateTime(bigArrayCalculation.CalculateAverageInBigWithThreads,
-                                      bigArrayCalculation.Generate);
-            
-            Console.WriteLine("Миллисекунд без потоков: " + timeWithNoThreads);
-            Console.WriteLine("Миллисекунд с потоками: " + timeWithThreads);
         }
 
         [Test]
