@@ -8,7 +8,7 @@ namespace TwoLayerSolution.ClassesUsingThreads
     public class TaskScheduler : IJobExecutor
     {
         private Queue<Action> _queue;
-        private object _queueLocker;
+        //private object _queueLocker;
         
         private Dictionary<Guid, Action> _runningTasks;
         private object _runningTasksLocker;
@@ -18,6 +18,8 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
         public TaskScheduler()
         {
+            //_queueLocker = new object();
+            _runningTasksLocker = new object();
             _queue = new Queue<Action>();
             _runningTasks = new Dictionary<Guid, Action>();
         }
@@ -31,25 +33,23 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
             while (_isMooving)
             {
+                int freeSpace;
                 lock (_runningTasksLocker)
                 {
-                    var freeSpace = maxConcurrent - _runningTasks.Count;
-                    
-                    if (Amount <= freeSpace)
+                    freeSpace = maxConcurrent - _runningTasks.Count;
+                }
+                if (Amount <= freeSpace)
+                {
+                    for (var i = 0; i < Amount;)
                     {
-                        for (var i = 0; i < Amount;)
-                        {
-                            MoveNextActionToRunningTasksFromQueue();
-                        }
-                    }
-                    else
-                    {
-                        for (var i = 0; i < freeSpace; freeSpace--)
-                        {
-                            MoveNextActionToRunningTasksFromQueue();
-                        }
+                        MoveNextActionToRunningTasksFromQueue();
                     }
                 }
+                else
+                    for (var i = 0; i < freeSpace; freeSpace--)
+                        {
+                            MoveNextActionToRunningTasksFromQueue();
+                        }
             }
         }
 
@@ -61,32 +61,38 @@ namespace TwoLayerSolution.ClassesUsingThreads
         public void Add(Action action)
         {
             //TODO: Exceptions
-            if (action == null) throw new ArgumentNullException(nameof(action));
-            lock (_queueLocker)
-            {
+            if (action == null) throw new ArgumentNullException("Action не может быть null!");
+            
+            //lock (_queueLocker) {
                 _queue.Enqueue(action);
                 Amount++;
-            }
+            //}
         }
 
         public void Clear()
         {
-            lock (_queueLocker)
-            {
+            //lock (_queueLocker)
+            //{
                 _queue.Clear();
-            }
+            //}
         }
 
         private void MoveNextActionToRunningTasksFromQueue()
         {
+            if (Amount == 0)
+            {
+                _isMooving = false;
+                return;
+            }
+
             ThreadPool.QueueUserWorkItem(state =>
             {
                 var id = Guid.NewGuid();
                 Action action;
-                lock (_queueLocker)
-                { 
+                // lock (_queueLocker)
+                // { 
                     action = _queue.Dequeue();
-                }
+                //}
 
                 lock (_runningTasksLocker)
                 {

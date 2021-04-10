@@ -51,9 +51,6 @@
         <Compile Include="..\Objects\CircleCollectionReverser.cs">
           <Link>Objects\CircleCollectionReverser.cs</Link>
         </Compile>
-        <Compile Include="..\Objects\ClassesUsingThreads\ActionWrapper.cs">
-          <Link>Objects\ClassesUsingThreads\ActionWrapper.cs</Link>
-        </Compile>
         <Compile Include="..\Objects\ClassesUsingThreads\BigArrayCalculation.cs">
           <Link>Objects\ClassesUsingThreads\BigArrayCalculation.cs</Link>
         </Compile>
@@ -148,6 +145,7 @@
         <Compile Include="GenericTest.cs" />
         <Compile Include="ReflectionTest.cs" />
         <Compile Include="SerializationTest.cs" />
+        <Compile Include="TaskSchedulerTest.cs" />
         <Compile Include="ThreadsTest.cs" />
     </ItemGroup>
     <ItemGroup>
