@@ -75,6 +75,12 @@
         <Compile Include="..\Objects\Enums\ProductEnum.cs">
           <Link>Objects\Enums\ProductEnum.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\Exceptions\CommonException.cs">
+          <Link>Objects\Exceptions\CommonException.cs</Link>
+        </Compile>
+        <Compile Include="..\Objects\Exceptions\NullArgumentException.cs">
+          <Link>Objects\Exceptions\NullArgumentException.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\Extensions\IntForTimeSpanExtension.cs">
           <Link>Objects\Extensions\IntForTimeSpanExtension.cs</Link>
         </Compile>

@@ -2,22 +2,26 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using TwoLayerSolution.Exceptions;
 
 namespace TwoLayerSolution.ClassesUsingThreads
 {
     public class TaskScheduler : IJobExecutor
     {
         private Queue<Action> _queue;
-
+        private object _queueLocker;
+        
         private Dictionary<Guid, Action> _runningTasks;
         private object _runningTasksLocker;
-
-        private int _maxConcurrent;
+        
         private bool _isMooving;
+        private bool _areTasksRunning;
 
         public TaskScheduler()
         {
             _runningTasksLocker = new object();
+            _queueLocker = new object();
+            
             _queue = new Queue<Action>();
             _runningTasks = new Dictionary<Guid, Action>();
         }
@@ -26,20 +30,33 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
         public void Start(int maxConcurrent)
         {
-            _maxConcurrent = maxConcurrent;
             _isMooving = true;
+            _areTasksRunning = true;
 
-            while (_isMooving)
+            while (_areTasksRunning)
             {
                 Thread.Sleep(1);
-                int freeSpace;
+                var freeSpace = GetFreeSpace(maxConcurrent);
+                RunTasks(freeSpace);
                 lock (_runningTasksLocker)
                 {
-                    freeSpace = maxConcurrent - _runningTasks.Count;
+                    if (_runningTasks.Count == 0 && _isMooving == false) 
+                        _areTasksRunning = false;
                 }
-                
-                RunTasks(freeSpace);
             }
+            
+        }
+
+        private int GetFreeSpace(int maxConcurrent)
+        {
+            int freeSpace;
+            
+            lock (_runningTasksLocker)
+            {
+                freeSpace = maxConcurrent - _runningTasks.Count;
+            }
+            
+            return freeSpace;
         }
 
         public void Stop()
@@ -49,15 +66,17 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
         public void Add(Action action)
         {
-            //TODO: Exceptions
-            if (action == null) throw new ArgumentNullException("Action не может быть null!");
+            if (action == null) throw new NullArgumentException(nameof(action), nameof(Add));
             _queue.Enqueue(action);
             Amount++;
         }
 
         public void Clear()
         {
-            _queue.Clear();
+            lock (_queueLocker)
+            {
+                _queue.Clear();   
+            }
         }
 
         private void MoveNextActionToRunningTasksFromQueue()
@@ -71,10 +90,15 @@ namespace TwoLayerSolution.ClassesUsingThreads
             ThreadPool.QueueUserWorkItem(state =>
             {
                 var id = Guid.NewGuid();
-                Action action;
-                action = _queue.Dequeue();
 
-                    lock (_runningTasksLocker)
+                Action action;
+                
+                lock (_queueLocker)
+                {
+                    action = _queue.Dequeue();   
+                }
+
+                lock (_runningTasksLocker)
                 {
                     _runningTasks[id] = action;
                     Amount--;
