@@ -8,8 +8,7 @@ namespace TwoLayerSolution.ClassesUsingThreads
     public class TaskScheduler : IJobExecutor
     {
         private Queue<Action> _queue;
-        //private object _queueLocker;
-        
+
         private Dictionary<Guid, Action> _runningTasks;
         private object _runningTasksLocker;
 
@@ -18,7 +17,6 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
         public TaskScheduler()
         {
-            //_queueLocker = new object();
             _runningTasksLocker = new object();
             _queue = new Queue<Action>();
             _runningTasks = new Dictionary<Guid, Action>();
@@ -38,18 +36,8 @@ namespace TwoLayerSolution.ClassesUsingThreads
                 {
                     freeSpace = maxConcurrent - _runningTasks.Count;
                 }
-                if (Amount <= freeSpace)
-                {
-                    for (var i = 0; i < Amount;)
-                    {
-                        MoveNextActionToRunningTasksFromQueue();
-                    }
-                }
-                else
-                    for (var i = 0; i < freeSpace; freeSpace--)
-                        {
-                            MoveNextActionToRunningTasksFromQueue();
-                        }
+                
+                RunTasks(freeSpace);
             }
         }
 
@@ -62,19 +50,13 @@ namespace TwoLayerSolution.ClassesUsingThreads
         {
             //TODO: Exceptions
             if (action == null) throw new ArgumentNullException("Action не может быть null!");
-            
-            //lock (_queueLocker) {
-                _queue.Enqueue(action);
-                Amount++;
-            //}
+            _queue.Enqueue(action);
+            Amount++;
         }
 
         public void Clear()
         {
-            //lock (_queueLocker)
-            //{
-                _queue.Clear();
-            //}
+            _queue.Clear();
         }
 
         private void MoveNextActionToRunningTasksFromQueue()
@@ -89,12 +71,9 @@ namespace TwoLayerSolution.ClassesUsingThreads
             {
                 var id = Guid.NewGuid();
                 Action action;
-                // lock (_queueLocker)
-                // { 
-                    action = _queue.Dequeue();
-                //}
+                action = _queue.Dequeue();
 
-                lock (_runningTasksLocker)
+                    lock (_runningTasksLocker)
                 {
                     _runningTasks[id] = action;
                     Amount--;
@@ -113,6 +92,14 @@ namespace TwoLayerSolution.ClassesUsingThreads
                     }
                 }
             });
+        }
+
+        private void RunTasks(int count)
+        {
+            for (var i = 0; i < count; i++)
+            {
+                MoveNextActionToRunningTasksFromQueue();
+            }
         }
     }
 }
