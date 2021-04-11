@@ -31,6 +31,7 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
             while (_isMooving)
             {
+                Thread.Sleep(1);
                 int freeSpace;
                 lock (_runningTasksLocker)
                 {

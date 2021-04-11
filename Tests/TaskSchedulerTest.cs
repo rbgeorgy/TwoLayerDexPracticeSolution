@@ -9,7 +9,7 @@ namespace Tests
         public void SlowOperationTwoSecondsOperationWithId()
         {
             var id = Guid.NewGuid();
-            Thread.Sleep(700);
+            Thread.Sleep(900);
             Console.WriteLine(id);
         }
 
