@@ -30,16 +30,16 @@ namespace Tests
         [Test]
         public void TaskSchedulerSimpleTest()
         {
-            var threadsCount = 20;
-            var scheduler = GetScheduler(45);
+            var threadsCount = 5;
+            var scheduler = GetScheduler(5);
 
             scheduler.Start(threadsCount);
 
-            ThreadPool.GetMaxThreads(out var max, out _);
-            ThreadPool.GetAvailableThreads(out var available, out _);
-            var running = max - available;
-
-            Console.WriteLine("Число работающих тредов: " + running);
+            // ThreadPool.GetMaxThreads(out var max, out _);
+            // ThreadPool.GetAvailableThreads(out var available, out _);
+            // var running = max - available;
+            //
+            // Console.WriteLine("Число работающих тредов: " + running);
             //Assert.True(running - 1 == threadsCount);
         }
 

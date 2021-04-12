@@ -14,7 +14,7 @@ namespace TwoLayerSolution.ClassesUsingThreads
         private Dictionary<Guid, Action> _runningTasks;
         private object _runningTasksLocker;
         
-        private bool _isMooving;
+        private bool _isMoving;
         private bool _areTasksRunning;
 
         public TaskScheduler()
@@ -30,21 +30,16 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
         public void Start(int maxConcurrent)
         {
-            _isMooving = true;
-            _areTasksRunning = true;
-
-            while (_areTasksRunning)
-            {
-                Thread.Sleep(1);
-                var freeSpace = GetFreeSpace(maxConcurrent);
-                RunTasks(freeSpace);
-                lock (_runningTasksLocker)
-                {
-                    if (_runningTasks.Count == 0 && _isMooving == false) 
-                        _areTasksRunning = false;
-                }
-            }
+            _isMoving = true;
             
+            var freeSpace = GetFreeSpace(maxConcurrent);
+            SendMaximumPossibleCountOfTasksToRun(freeSpace);
+
+            while (_isMoving)
+            {
+                freeSpace = WaitSomeMillisecondsAndGetFreeSpaceAfter(2, maxConcurrent);
+                if (freeSpace != 0) SendMaximumPossibleCountOfTasksToRun(freeSpace);
+            }
         }
 
         private int GetFreeSpace(int maxConcurrent)
@@ -61,13 +56,16 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
         public void Stop()
         {
-            _isMooving = false;
+            _isMoving = false;
         }
 
         public void Add(Action action)
         {
             if (action == null) throw new NullArgumentException(nameof(action), nameof(Add));
-            _queue.Enqueue(action);
+            lock (_queueLocker)
+            {
+                _queue.Enqueue(action);
+            }
             Amount++;
         }
 
@@ -83,7 +81,7 @@ namespace TwoLayerSolution.ClassesUsingThreads
         {
             if (Amount == 0)
             {
-                _isMooving = false;
+                _isMoving = false;
                 return;
             }
 
@@ -125,6 +123,17 @@ namespace TwoLayerSolution.ClassesUsingThreads
             {
                 MoveNextActionToRunningTasksFromQueue();
             }
+        }
+
+        private int WaitSomeMillisecondsAndGetFreeSpaceAfter(int millisecondsCount, int maxConcurrent)
+        {
+            Thread.Sleep(millisecondsCount);
+            return GetFreeSpace(maxConcurrent);
+        }
+
+        private void SendMaximumPossibleCountOfTasksToRun(int freeSpace)
+        {
+            RunTasks(Amount <= freeSpace ? Amount : freeSpace);
         }
     }
 }
