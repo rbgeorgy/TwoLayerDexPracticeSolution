@@ -27,7 +27,8 @@ namespace TwoLayerSolution.ClassesUsingThreads
         }
 
         public int Amount { get; private set; }
-
+        
+        //TODO: сделать асинхронным(например, запускать в одном из потоков из пула), чтобы иметь доступ к Clear или Add пока работает Start
         public void Start(int maxConcurrent)
         {
             _isMoving = true;
@@ -37,7 +38,7 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
             while (_isMoving)
             {
-                freeSpace = WaitSomeMillisecondsAndGetFreeSpaceAfter(1, maxConcurrent);
+                freeSpace = WaitSomeMillisecondsAndGetFreeSpaceAfter(10, maxConcurrent);
                 if (freeSpace != 0) SendMaximumPossibleCountOfTasksToRun(freeSpace);
             }
 
@@ -45,7 +46,7 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
             while (!isComplete)
             {
-                Thread.Sleep(20);
+                Thread.Sleep(10);
                 
                 lock(_runningTasksLocker)
                 {
