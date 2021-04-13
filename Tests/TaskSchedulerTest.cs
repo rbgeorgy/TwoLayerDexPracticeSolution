@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using NUnit.Framework;
 
@@ -6,11 +7,12 @@ namespace Tests
 {
     public class TaskSchedulerTest
     {
-        public TwoLayerSolution.ClassesUsingThreads.TaskScheduler GetScheduler(int itemsCount)
+        public delegate void TaskForScheduler();
+        public TwoLayerSolution.ClassesUsingThreads.TaskScheduler GetScheduler(int itemsCount, TaskForScheduler task)
         {
             var scheduler = new TwoLayerSolution.ClassesUsingThreads.TaskScheduler();
 
-            Action action = SlowOperationTwoSecondsOperationWithId;
+            Action action = task.Invoke;
 
             for (var i = 0; i < itemsCount; i++)
             {
@@ -20,34 +22,45 @@ namespace Tests
             return scheduler;
         }
 
-        public void SlowOperationTwoSecondsOperationWithId()
+        public void TwoSecondsSlowOperationWithId()
         {
             var id = Guid.NewGuid();
             Thread.Sleep(1000);
             Console.WriteLine(id);
         }
 
+        public void FiveSecondsSlowOperation()
+        {
+            Thread.Sleep(5000);
+            Console.WriteLine("OK");
+        }
+
         [Test]
-        public void TaskSchedulerSimpleTest()
+        public void AreAllThreadsCompletedTest()
         {
             var threadsCount = 5;
-            var scheduler = GetScheduler(5);
-
+            var scheduler = GetScheduler(15, TwoSecondsSlowOperationWithId);
             scheduler.Start(threadsCount);
+            Assert.AreEqual(2, scheduler.GetCountOfRunningThreads());
+        }
 
-            // ThreadPool.GetMaxThreads(out var max, out _);
-            // ThreadPool.GetAvailableThreads(out var available, out _);
-            // var running = max - available;
-            //
-            // Console.WriteLine("Число работающих тредов: " + running);
-            //Assert.True(running - 1 == threadsCount);
+        [Test]
+        public void AreTasksReallyWorkParallelTest()
+        {
+            var threadsCount = 3;
+            var scheduler = GetScheduler(3, FiveSecondsSlowOperation);
+            var time = new Stopwatch();
+            time.Start();
+            scheduler.Start(threadsCount);
+            time.Stop();
+            Assert.IsTrue(time.ElapsedMilliseconds <= 5100);
         }
 
         [Test]
         public void TaskSchedulerClearWhileDequeuingTest()
         {
-            var threadsCount = 255;
-            var scheduler = GetScheduler(100);
+            var threadsCount = 17;
+            var scheduler = GetScheduler(14, TwoSecondsSlowOperationWithId);
             scheduler.Start(threadsCount);
             scheduler.Clear();
         }

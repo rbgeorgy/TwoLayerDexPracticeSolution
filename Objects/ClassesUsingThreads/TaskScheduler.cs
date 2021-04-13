@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using TwoLayerSolution.Exceptions;
 
 namespace TwoLayerSolution.ClassesUsingThreads
@@ -15,7 +16,6 @@ namespace TwoLayerSolution.ClassesUsingThreads
         private object _runningTasksLocker;
         
         private bool _isMoving;
-        private bool _areTasksRunning;
 
         public TaskScheduler()
         {
@@ -37,8 +37,20 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
             while (_isMoving)
             {
-                freeSpace = WaitSomeMillisecondsAndGetFreeSpaceAfter(2, maxConcurrent);
+                freeSpace = WaitSomeMillisecondsAndGetFreeSpaceAfter(1, maxConcurrent);
                 if (freeSpace != 0) SendMaximumPossibleCountOfTasksToRun(freeSpace);
+            }
+
+            var isComplete = false;
+
+            while (!isComplete)
+            {
+                Thread.Sleep(20);
+                
+                lock(_runningTasksLocker)
+                {
+                    if (_runningTasks.Count == 0) isComplete = true;
+                }
             }
         }
 
@@ -75,6 +87,13 @@ namespace TwoLayerSolution.ClassesUsingThreads
             {
                 _queue.Clear();   
             }
+        }
+
+        public int GetCountOfRunningThreads()
+        {
+            ThreadPool.GetMaxThreads(out var max, out _);
+            ThreadPool.GetAvailableThreads(out var available, out _);
+            return max - available;
         }
 
         private void MoveNextActionToRunningTasksFromQueue()
@@ -133,6 +152,7 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
         private void SendMaximumPossibleCountOfTasksToRun(int freeSpace)
         {
+            if (Amount == 0) _isMoving = false;
             RunTasks(Amount <= freeSpace ? Amount : freeSpace);
         }
     }
