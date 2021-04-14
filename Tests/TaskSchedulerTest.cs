@@ -41,6 +41,7 @@ namespace Tests
             var threadsCount = 5;
             var scheduler = GetScheduler(15, TwoSecondsSlowOperationWithId);
             scheduler.Start(threadsCount);
+            scheduler.Join();
             Assert.AreEqual(2, scheduler.GetCountOfRunningThreads());
         }
 
@@ -52,17 +53,44 @@ namespace Tests
             var time = new Stopwatch();
             time.Start();
             scheduler.Start(threadsCount);
+            scheduler.Join();
             time.Stop();
-            Assert.IsTrue(time.ElapsedMilliseconds <= 5100);
+            Console.WriteLine(time.ElapsedMilliseconds);
+            Assert.IsTrue(time.ElapsedMilliseconds <= 6000);
         }
 
         [Test]
-        public void TaskSchedulerClearWhileDequeuingTest()
+        public void ClearWhileDequeuingTest()
         {
-            var threadsCount = 17;
+            var threadsCount = 2;
+            var scheduler = GetScheduler(14, TwoSecondsSlowOperationWithId);
+            Assert.AreEqual(14,scheduler.Amount);
+            scheduler.Start(threadsCount);
+            Thread.Sleep(2500);
+            
+            Assert.DoesNotThrow(() =>
+            {
+                scheduler.Clear(); 
+            });
+            
+            Assert.AreEqual(0,scheduler.Amount);
+            scheduler.Join();
+        }
+
+        [Test]
+        public void AddingWhileDequeuingAndRunningTasks()
+        {
+            var threadsCount = 2;
             var scheduler = GetScheduler(14, TwoSecondsSlowOperationWithId);
             scheduler.Start(threadsCount);
-            scheduler.Clear();
+            Thread.Sleep(500);
+            var amount = scheduler.Amount;
+            Assert.DoesNotThrow(() =>
+            {
+                scheduler.Add(TwoSecondsSlowOperationWithId);
+            });
+            Assert.AreEqual(amount+1, scheduler.Amount);
+            scheduler.Join();
         }
 
     }

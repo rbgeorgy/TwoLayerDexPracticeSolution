@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 using TwoLayerSolution.Exceptions;
@@ -10,49 +11,87 @@ namespace TwoLayerSolution.ClassesUsingThreads
 {
     public class TaskScheduler : IJobExecutor
     {
+        private Thread _startThread;
+        private Thread _stopThread;
+        private Thread _threadWhichMainThreadNeedToWait;
+
         private Queue<Action> _queue;
         private object _queueLocker;
         
         private Dictionary<Guid, Action> _runningTasks;
         private object _runningTasksLocker;
         
-        private bool _isMoving;
+        private volatile bool  _queueIsntEmpty;
+        private volatile bool _isQueueProcessingComplete;
+        private volatile bool _isEverythingComplete;
         public TaskScheduler()
         {
             _runningTasksLocker = new object();
             _queueLocker = new object();
-            
+
             _queue = new Queue<Action>();
             _runningTasks = new Dictionary<Guid, Action>();
         }
 
-        public int Amount { get; private set; }
-        
-        //TODO: сделать асинхронным(например, запускать в одном из потоков из пула), чтобы иметь доступ к Clear или Add пока работает Start
+        private int _amount;
+        public int Amount
+        {
+            get => Interlocked.CompareExchange(ref _amount, 0, 0);
+            private set => Interlocked.Exchange(ref _amount, value);
+        }
+
+        public void Join()
+        {
+            _threadWhichMainThreadNeedToWait.Join();
+        }
+
         public void Start(int maxConcurrent)
         {
-            _isMoving = true;
-            
-            var freeSpace = GetFreeSpace(maxConcurrent);
-            SendMaximumPossibleCountOfTasksToRun(freeSpace);
-
-            while (_isMoving)
+            _startThread = new Thread(() =>
             {
-                freeSpace = WaitSomeMillisecondsAndGetFreeSpaceAfter(10, maxConcurrent);
-                if (freeSpace != 0) SendMaximumPossibleCountOfTasksToRun(freeSpace);
-            }
+                _isQueueProcessingComplete = false;
+                var freeSpace = GetFreeSpace(maxConcurrent);
+                SendMaximumPossibleCountOfTasksToRun(freeSpace);
 
-            var isComplete = false;
-
-            while (!isComplete)
-            {
-                Thread.Sleep(10);
-                
-                lock(_runningTasksLocker)
+                while (!_isQueueProcessingComplete)
                 {
-                    if (_runningTasks.Count == 0) isComplete = true;
+                    freeSpace = WaitSomeMillisecondsAndGetFreeSpaceAfter(10, maxConcurrent);
+                    if (freeSpace != 0) SendMaximumPossibleCountOfTasksToRun(freeSpace);
                 }
+
+                if (!_queueIsntEmpty && AreAllTheTasksComplete())
+                {
+                    _isEverythingComplete = true;
+                }
+            });
+            _startThread.Start();
+            KillMainThreadIfEverythingComplete();
+        }
+
+        private bool AreAllTheTasksComplete()
+        {
+            lock(_runningTasksLocker)
+            {
+                if (_runningTasks.Count == 0) return true;
             }
+            return false;
+        }
+
+        private void KillMainThreadIfEverythingComplete()
+        {
+            _threadWhichMainThreadNeedToWait = new Thread(() =>
+            {
+                while (!_isEverythingComplete)
+                {
+                    if (!_queueIsntEmpty && AreAllTheTasksComplete())
+                    {
+                        _isEverythingComplete = true;
+                    }
+                    Thread.Sleep(10);
+                }
+            });
+            _threadWhichMainThreadNeedToWait.Start();
+            //_threadWhichMainThreadNeedToWait.Join();
         }
 
         private int GetFreeSpace(int maxConcurrent)
@@ -69,7 +108,23 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
         public void Stop()
         {
-            _isMoving = false;
+            _stopThread = new Thread(() =>
+            {
+                _isQueueProcessingComplete = true;
+
+                while (!AreAllTheTasksComplete())
+                {
+                    Thread.Sleep(10);
+                }
+
+                if (_queueIsntEmpty) //Если вызвали стоп, выполнились все задания, но очередь не пуста
+                {
+                    Thread.Sleep(1000); //Вдруг нажмут Start, чтобы выполнить
+                    Environment.Exit(0);
+                }    
+                KillMainThreadIfEverythingComplete();
+            });
+            _stopThread.Start();
         }
 
         public void Add(Action action)
@@ -79,15 +134,19 @@ namespace TwoLayerSolution.ClassesUsingThreads
             {
                 _queue.Enqueue(action);
             }
-            Amount++;
+            _queueIsntEmpty = true;
+            Interlocked.Increment(ref _amount);
         }
 
         public void Clear()
         {
             lock (_queueLocker)
             {
-                _queue.Clear();   
+                _queue.Clear();
             }
+
+            Amount = 0;
+            _queueIsntEmpty = false;
         }
 
         public int GetCountOfRunningThreads()
@@ -101,7 +160,7 @@ namespace TwoLayerSolution.ClassesUsingThreads
         {
             if (Amount == 0)
             {
-                _isMoving = false;
+                _queueIsntEmpty = false;
                 return;
             }
 
@@ -119,7 +178,7 @@ namespace TwoLayerSolution.ClassesUsingThreads
                 lock (_runningTasksLocker)
                 {
                     _runningTasks[id] = action;
-                    Amount--;
+                    Interlocked.Decrement(ref _amount);
                 }
                 
                 try
@@ -153,7 +212,10 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
         private void SendMaximumPossibleCountOfTasksToRun(int freeSpace)
         {
-            if (Amount == 0) _isMoving = false;
+            if (Amount == 0)
+            {
+                _queueIsntEmpty = false;
+            }
             RunTasks(Amount <= freeSpace ? Amount : freeSpace);
         }
     }
