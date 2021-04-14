@@ -119,7 +119,7 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
                 if (_queueIsntEmpty) //Если вызвали стоп, выполнились все задания, но очередь не пуста
                 {
-                    Thread.Sleep(1000); //Вдруг нажмут Start, чтобы выполнить
+                    Thread.Sleep(1000); //Вдруг нажмут Start, чтобы задания из очереди не пропали
                     Environment.Exit(0);
                 }    
                 KillMainThreadIfEverythingComplete();
