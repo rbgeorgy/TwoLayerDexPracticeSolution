@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TwoLayerSolution.Exceptions;
 
+//TODO: Выкидывать исключение если maxConcurrent >= 1020
 namespace TwoLayerSolution.ClassesUsingThreads
 {
     public class TaskScheduler : IJobExecutor
@@ -16,7 +17,6 @@ namespace TwoLayerSolution.ClassesUsingThreads
         private object _runningTasksLocker;
         
         private bool _isMoving;
-
         public TaskScheduler()
         {
             _runningTasksLocker = new object();
