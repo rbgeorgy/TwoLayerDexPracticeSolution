@@ -73,7 +73,7 @@ namespace Tests
                 scheduler.Clear(); 
             });
             
-            Assert.AreEqual(0,scheduler.Amount);
+            Assert.AreEqual(0, scheduler.Amount);
             scheduler.Join();
         }
 
@@ -89,7 +89,7 @@ namespace Tests
             {
                 scheduler.Add(TwoSecondsSlowOperationWithId);
             });
-            Assert.AreEqual(amount+1, scheduler.Amount);
+            Assert.AreEqual(amount + 1, scheduler.Amount);
             scheduler.Join();
         }
 
