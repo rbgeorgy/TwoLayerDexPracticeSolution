@@ -1,12 +1,8 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Threading;
-using System.Threading.Tasks;
 using TwoLayerSolution.Exceptions;
 
-//TODO: Выкидывать исключение если maxConcurrent >= 1020
 namespace TwoLayerSolution.ClassesUsingThreads
 {
     public class TaskScheduler : IJobExecutor
@@ -16,10 +12,10 @@ namespace TwoLayerSolution.ClassesUsingThreads
         private Thread _threadWhichMainThreadNeedToWait;
 
         private Queue<Action> _queue;
-        private object _queueLocker;
+        private readonly object _queueLocker;
         
         private Dictionary<Guid, Action> _runningTasks;
-        private object _runningTasksLocker;
+        private readonly object _runningTasksLocker;
         
         private volatile bool  _queueIsntEmpty;
         private volatile bool _isQueueProcessingComplete;
@@ -27,6 +23,14 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
         private const int StopDefaultTimeout = 3000;
         private const int RefreshTimeout = 5;
+        
+        private int _amount;
+        public int Amount
+        {
+            get => Interlocked.CompareExchange(ref _amount, 0, 0);
+            private set => Interlocked.Exchange(ref _amount, value);
+        }
+        
         public TaskScheduler()
         {
             _runningTasksLocker = new object();
@@ -34,18 +38,6 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
             _queue = new Queue<Action>();
             _runningTasks = new Dictionary<Guid, Action>();
-        }
-
-        private int _amount;
-        public int Amount
-        {
-            get => Interlocked.CompareExchange(ref _amount, 0, 0);
-            private set => Interlocked.Exchange(ref _amount, value);
-        }
-
-        public void Join()
-        {
-            _threadWhichMainThreadNeedToWait.Join();
         }
 
         public void Start(int maxConcurrent)
@@ -75,44 +67,7 @@ namespace TwoLayerSolution.ClassesUsingThreads
             _startThread.Start();
             KillMainThreadIfEverythingComplete();
         }
-
-        private bool AreAllTheTasksComplete()
-        {
-            lock(_runningTasksLocker)
-            {
-                if (_runningTasks.Count == 0) return true;
-            }
-            return false;
-        }
-
-        private void KillMainThreadIfEverythingComplete()
-        {
-            _threadWhichMainThreadNeedToWait = new Thread(() =>
-            {
-                while (!_isEverythingComplete)
-                {
-                    if (!_queueIsntEmpty && AreAllTheTasksComplete())
-                    {
-                        _isEverythingComplete = true;
-                    }
-                    Thread.Sleep(RefreshTimeout);
-                }
-            });
-            _threadWhichMainThreadNeedToWait.Start();
-        }
-
-        private int GetFreeSpace(int maxConcurrent)
-        {
-            int freeSpace;
-            
-            lock (_runningTasksLocker)
-            {
-                freeSpace = maxConcurrent - _runningTasks.Count;
-            }
-            
-            return freeSpace;
-        }
-
+        
         public void Stop()
         {
             _stopThread = new Thread(() =>
@@ -155,14 +110,49 @@ namespace TwoLayerSolution.ClassesUsingThreads
             Amount = 0;
             _queueIsntEmpty = false;
         }
-
-        public int GetCountOfRunningThreads()
+        
+        public void Join()
         {
-            ThreadPool.GetMaxThreads(out var max, out _);
-            ThreadPool.GetAvailableThreads(out var available, out _);
-            return max - available;
+            _threadWhichMainThreadNeedToWait.Join();
         }
 
+        private void KillMainThreadIfEverythingComplete()
+        {
+            _threadWhichMainThreadNeedToWait = new Thread(() =>
+            {
+                while (!_isEverythingComplete)
+                {
+                    if (!_queueIsntEmpty && AreAllTheTasksComplete())
+                    {
+                        _isEverythingComplete = true;
+                    }
+                    Thread.Sleep(RefreshTimeout);
+                }
+            });
+            _threadWhichMainThreadNeedToWait.Start();
+        }
+
+        private int GetFreeSpace(int maxConcurrent)
+        {
+            int freeSpace;
+            
+            lock (_runningTasksLocker)
+            {
+                freeSpace = maxConcurrent - _runningTasks.Count;
+            }
+            
+            return freeSpace;
+        }
+
+        private bool AreAllTheTasksComplete()
+        {
+            lock(_runningTasksLocker)
+            {
+                if (_runningTasks.Count == 0) return true;
+            }
+            return false;
+        }
+        
         private void MoveNextActionToRunningTasksFromQueue()
         {
             if (Amount == 0)
@@ -224,6 +214,13 @@ namespace TwoLayerSolution.ClassesUsingThreads
                 _queueIsntEmpty = false;
             }
             RunTasks(Amount <= freeSpace ? Amount : freeSpace);
+        }
+        
+        public int GetCountOfRunningThreads()
+        {
+            ThreadPool.GetMaxThreads(out var max, out _);
+            ThreadPool.GetAvailableThreads(out var available, out _);
+            return max - available;
         }
     }
 }
