@@ -24,6 +24,9 @@ namespace TwoLayerSolution.ClassesUsingThreads
         private volatile bool  _queueIsntEmpty;
         private volatile bool _isQueueProcessingComplete;
         private volatile bool _isEverythingComplete;
+
+        private const int StopDefaultTimeout = 3000;
+        private const int RefreshTimeout = 5;
         public TaskScheduler()
         {
             _runningTasksLocker = new object();
@@ -47,6 +50,11 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
         public void Start(int maxConcurrent)
         {
+            if (maxConcurrent > 1020)
+            {
+                throw new NonValidValueException(nameof(maxConcurrent), nameof(Start), maxConcurrent);
+            }
+
             _startThread = new Thread(() =>
             {
                 _isQueueProcessingComplete = false;
@@ -55,7 +63,7 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
                 while (!_isQueueProcessingComplete)
                 {
-                    freeSpace = WaitSomeMillisecondsAndGetFreeSpaceAfter(10, maxConcurrent);
+                    freeSpace = WaitSomeMillisecondsAndGetFreeSpaceAfter(RefreshTimeout, maxConcurrent);
                     if (freeSpace != 0) SendMaximumPossibleCountOfTasksToRun(freeSpace);
                 }
 
@@ -87,11 +95,10 @@ namespace TwoLayerSolution.ClassesUsingThreads
                     {
                         _isEverythingComplete = true;
                     }
-                    Thread.Sleep(10);
+                    Thread.Sleep(RefreshTimeout);
                 }
             });
             _threadWhichMainThreadNeedToWait.Start();
-            //_threadWhichMainThreadNeedToWait.Join();
         }
 
         private int GetFreeSpace(int maxConcurrent)
@@ -114,17 +121,17 @@ namespace TwoLayerSolution.ClassesUsingThreads
 
                 while (!AreAllTheTasksComplete())
                 {
-                    Thread.Sleep(10);
+                    Thread.Sleep(RefreshTimeout);
                 }
 
-                if (_queueIsntEmpty) //Если вызвали стоп, выполнились все задания, но очередь не пуста
+                if (_queueIsntEmpty)
                 {
-                    Thread.Sleep(1000); //Вдруг нажмут Start, чтобы задания из очереди не пропали
-                    Environment.Exit(0);
-                }    
-                KillMainThreadIfEverythingComplete();
+                    Thread.Sleep(StopDefaultTimeout);
+                    _isEverythingComplete = true;
+                }
             });
             _stopThread.Start();
+            KillMainThreadIfEverythingComplete();
         }
 
         public void Add(Action action)

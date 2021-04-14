@@ -78,6 +78,9 @@
         <Compile Include="..\Objects\Exceptions\CommonException.cs">
           <Link>Objects\Exceptions\CommonException.cs</Link>
         </Compile>
+        <Compile Include="..\Objects\Exceptions\NonValidValueException.cs">
+          <Link>Objects\Exceptions\NonValidValueException.cs</Link>
+        </Compile>
         <Compile Include="..\Objects\Exceptions\NullArgumentException.cs">
           <Link>Objects\Exceptions\NullArgumentException.cs</Link>
         </Compile>

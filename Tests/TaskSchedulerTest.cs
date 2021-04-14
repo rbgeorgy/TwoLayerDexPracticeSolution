@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using NUnit.Framework;
+using TwoLayerSolution.Exceptions;
 
 namespace Tests
 {
@@ -91,6 +92,44 @@ namespace Tests
             });
             Assert.AreEqual(amount + 1, scheduler.Amount);
             scheduler.Join();
+        }
+
+        [Test]
+        public void CallingStopButQueueIsNotEmptyTest()
+        {
+            var threadsCount = 2;
+            var time = new Stopwatch();
+            var scheduler = GetScheduler(14, TwoSecondsSlowOperationWithId);
+            
+            scheduler.Start(threadsCount);
+            Thread.Sleep(700);
+            
+            time.Start();
+                scheduler.Stop();
+                scheduler.Join();
+            time.Stop();
+            
+            Assert.IsTrue(time.ElapsedMilliseconds >= 3000 && time.ElapsedMilliseconds <= 3350);
+        }
+
+        [Test]
+        public void TrySetMoreThenMaxThreadCount()
+        {
+            var threadsCount = 1024;
+            var scheduler = GetScheduler(6514, TwoSecondsSlowOperationWithId);
+            Assert.Throws<NonValidValueException>(() =>
+            {
+                scheduler.Start(threadsCount);
+            });
+            
+            try
+            {
+                scheduler.Start(threadsCount);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
     }
